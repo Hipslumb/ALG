@@ -35,7 +35,7 @@ void swap(int* array, unsigned i, unsigned j) {
 
 
 
-void by_choice(int size, int* array) {
+void by_selection(int size, int* array) {
 	unsigned i, j, min;
 	for (i = 0;i < size - 1;i++) {
 		min = i;
@@ -57,7 +57,57 @@ void by_insertion(int size,int* array) {
 	}
 }
 
-void main() {
+void merge(int* array, int left, int right) {
+
+	//fr ex 1 3 2 4 5 //
+
+	unsigned mid = left + (right - left) / 2, i = left, j = mid + 1, k = 0; int tmp[1000];
+
+	while (i <= mid && j <= right) {
+		if (array[i] <= array[j]) {
+			tmp[k] = array[i];i++;
+		}
+		else {
+			tmp[k] = array[j];j++;
+		}
+		k++;
+	}
+
+	while (i <= mid) {
+		tmp[k] = array[i]; i++; k++;
+	}
+	while (j <= right) {
+		tmp[k] = array[j]; j++; k++;
+	}
+	for (i = 0; i < k; i++) array[left + i] = tmp[i];
+}
+
+void by_merge(int* array, int left, int right) {
+
+	//fr ex 1 3 2 4 5 // 
+
+	if (left < right) {
+		if (right - left == 1) {
+			if (array[left] > array[right]) {
+				swap(array, left, right);
+			}
+		}
+		else {
+			by_merge(array, left, left + (right - left) / 2);
+			by_merge(array, left + (right - left) / 2 + 1, right);
+			merge(array, left, right);
+		}
+	}
+		
+}
+
+
+void by_heap(int size, int* array) {
+
+}
+
+
+int main() {
 	setlocale(LC_ALL, "RU");
 	fstream in; in.open("input.txt",ios::in);
 	
@@ -65,18 +115,25 @@ void main() {
 	int* array = new int[size];
 	array_create(in, size, array);
 
-	bool x;
-	cout << "\nÂÛÁÎÐ ÌÅÒÎÄÀ ÑÎÐÒÈÐÎÂÊÈ (1 - âûáîðîì,0 - âñòàâêîé): ";
-	cin >> x;
-	switch (x) {
+	unsigned c;
+	cout << "\nSelect the sorting algorithm (1 - insertion, 2 - selection, 3 - merge, 4 - heap): ";
+	cin >> c; unsigned left = 0, right = size - 1;
+	switch (c) {
 	case 1:
-		by_choice(size, array); break;
-	case 0:
-		by_insertion(size, array);
+		by_insertion(size, array);break;
+	case 2:
+		by_selection(size, array); break;
+	case 3:
+		by_merge(array, left, right);break;
+	case 4: 
+		break;
+	default: 
+		cout << "There is no such algorithm.";
 	}
 	cout << "Sorted array: "; output(size, array);
 
 	in.close();
-	cout << "\n\nÐàáîòà ñ ïðîãðàììîé çàâåðøåíà\n";
+	cout << "\n\nCOMPLETED.\n";
+	return 0;
 }
 
