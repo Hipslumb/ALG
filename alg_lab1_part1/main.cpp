@@ -101,8 +101,28 @@ void by_merge(int* array, int left, int right) {
 		
 }
 
+void heap_for_three(int i,int size, int* array) {
+	int left = 2 * i + 1, right = 2 * i + 2;
+
+	if (left < size && array[i] < array[left]) { 
+		swap(array, i, left);
+		heap_for_three(left, size, array);
+	}
+	if (right < size && array[i] < array[right]) {
+		swap(array, i, right);
+		heap_for_three(right, size, array);
+	}
+
+}
 
 void by_heap(int size, int* array) {
+	
+	for (int i = size / 2 - 1;i >= 0;i--) heap_for_three(i, size, array);
+
+	for (int i = size - 1;i >= 0;i--) {
+		swap(array, 0, i);
+		heap_for_three(0, i, array);
+	}
 
 }
 
@@ -124,9 +144,9 @@ int main() {
 	case 2:
 		by_selection(size, array); break;
 	case 3:
-		by_merge(array, left, right);break;
+		by_merge(array, left, right); break;
 	case 4: 
-		break;
+		by_heap(size, array); break;
 	default: 
 		cout << "There is no such algorithm.";
 	}
