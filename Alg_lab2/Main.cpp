@@ -1,35 +1,51 @@
 #include "Node.h"
 
 int main() {
-	form tree; Node* root = nullptr;
-	root = tree.insert_node(root, 50, nullptr);
-	root = tree.insert_node(root, 30, nullptr);
-	root = tree.insert_node(root, 20, nullptr);
-	root = tree.insert_node(root, 10, nullptr);
-	root = tree.insert_node(root, 100, nullptr);
-	root = tree.insert_node(root, 60, nullptr);
-	root = tree.insert_node(root, 110, nullptr);
-	root = tree.insert_node(root, 70, nullptr);
+	form tree;
+	tree.insert(50);
+	tree.insert(30);
+	tree.insert(20);
+	tree.insert(10);
+	tree.insert(100);
+	tree.insert(60);
+	tree.insert(110);
+	tree.insert(70);
+
 
 	cout << "BST:\n";
-	print_tree(root, "", true);
+	print_tree(tree.root, "", true);
 
-	cout << "\nHeight: " << tree.get_height(root);
+	cout << "\nHeight: " << tree.get_height(tree.root);
+	cout << "\nMIN: " << tree.min_node(tree.root)->key;
+	cout << "\nMAX: " << tree.max_node(tree.root)->key;
 
-	cout << "\nMIN: " << tree.min_node(root)->num;
-	cout << "\nMAX: " << tree.max_node(root)->num;
+	Node* find = tree.search_node(tree.root,30);
 
-	cout << "\npre-order: "; pre_order(root); cout << "end";
+	if (find != nullptr) {
+		cout << "\nSearch result: " << find->key
+			<< " (parent: " << (find->parent ? to_string(find->parent->key) : "null")
+			<< ", left: " << (find->left ? to_string(find->left->key) : "null")
+			<< ", right: " << (find->right ? to_string(find->right->key) : "null") << ")";
+	}
+	else {
+		cout << "\nSearch result: null";
+	}
 
-	cout << "\nin-order: "; in_order(root); cout << "end";
+	cout << "\npre-order: "; pre_order(tree.root); cout << "end";
+	cout << "\nin-order: "; in_order(tree.root); cout << "end";
+	cout << "\npost-order: "; post_order(tree.root); cout << "end";
 
-	cout << "\npost-order: "; post_order(root); cout << "end";
+	cout << "\nBFS: "; BFS(tree.root); cout << "end";
 
-	root = tree.delete_node(root, 20);
-	root = tree.delete_node(root, 110);
+	cout << "\nDFS: "; DFS(tree.root); cout << "end";
+
+	tree.delete_n(20);
+	tree.delete_n(110);
 
 	cout << "\n\nBST after delete:\n";
-	print_tree(root, "", true);
+	print_tree(tree.root, "", true);
+
+	
 	cout << "\n\n";
 	return 0;
 }

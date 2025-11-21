@@ -12,9 +12,9 @@ Node* form::create_node(int num) {
 }
 
 Node* form::search_node(Node* root, int key) {
-	if (root == nullptr || root->num == key)
+	if (root == nullptr || root->key == key)
 		return root;
-	if (key > root->num)
+	if (key > root->key)
 		return search_node(root->right, key);
 	return search_node(root->left, key);
 }
@@ -25,7 +25,7 @@ Node* form::insert_node(Node* root, int num, Node* p) {
 		newnode->parent = p;
 		return newnode;
 	}
-	if (num < root->num)
+	if (num < root->key)
 		root->left = insert_node(root->left, num, root);
 	else
 		root->right = insert_node(root->right, num, root);
@@ -49,13 +49,13 @@ Node* form::max_node(Node* root) {
 Node* form::delete_node(Node* root, int key) {
 	if (root == nullptr) return root;
 
-	if (key < root->num) {
+	if (key < root->key) {
 		root->left = delete_node(root->left, key);
 		if (root->left != nullptr) {
 			root->left->parent = root;
 		}
 	}
-	else if (key > root->num) {
+	else if (key > root->key) {
 		root->right = delete_node(root->right, key);
 		if (root->right != nullptr) {
 			root->right->parent = root;
@@ -75,8 +75,8 @@ Node* form::delete_node(Node* root, int key) {
 			return tmp;
 		}
 		tmp = min_node(root->right);
-		root->num = tmp->num;
-		root->right = delete_node(root->right, root->num);
+		root->key = tmp->key;
+		root->right = delete_node(root->right, root->key);
 		if (root->right != nullptr)
 			root->right->parent = root;
 	}
@@ -88,9 +88,9 @@ void print_tree(Node* root, string space, bool left) {
 	if (root != nullptr) {
 		cout << space + "|--";
 
-		cout << root->num;
+		cout << root->key;
 		if (root->parent == nullptr) cout << " (root)\n";
-		else cout << " (parent: " << root->parent->num << ")\n";
+		else cout << " (parent: " << root->parent->key << ")\n";
 
 		print_tree(root->left, space + (left ? "|   " : "    "), true);
 		print_tree(root->right, space + (left ? "|   " : "    "), false);
@@ -110,40 +110,74 @@ int form::get_height(Node* root) {
 	return 1 + max(get_height(root->left),get_height(root->right));
 }
 
-void pre_order(Node* node) {
-	if (node != nullptr) {
-		cout << node->num << " -> ";
-		pre_order(node->left);
-		pre_order(node->right);
+
+void pre_order(Node* root) {
+	if (root != nullptr) {
+		cout << root->key << " -> ";
+		pre_order(root->left);
+		pre_order(root->right);
 
 	}
 }
-
-void in_order(Node* node) {
-	if (node != nullptr) {
-		in_order(node->left);
-		cout << node->num << " -> ";
-		in_order(node->right);
+void in_order(Node* root) {
+	if (root != nullptr) {
+		in_order(root->left);
+		cout << root->key << " -> ";
+		in_order(root->right);
+	}
+}
+void post_order(Node* root) {
+	if (root != nullptr) {
+		post_order(root->left);
+		post_order(root->right);
+		cout << root->key << " -> ";
 	}
 }
 
-void post_order(Node* node) {
+void BFS(Node* root) {
+	form tree;
+	int hight = tree.get_height(root);
+	for (int l = 0;l < hight;l++) {
+		print_l(root, l);
+	}
+}
+void print_l(Node* node, int l) {
 	if (node != nullptr) {
-		post_order(node->left);
-		post_order(node->right);
-		cout << node->num << " -> ";
+		if (l == 0) {
+			cout << node->key << " -> ";
+		}
+		else {
+			print_l(node->left, l - 1);
+			print_l(node->right, l - 1);
+		}
 	}
 }
 
-void BFS(Node* node) {
-	if (node != nullptr) {
-		cout << node->num << " -> ";
-
-	}
-}
-
-void DFS(Node* node) {
-	if (node != nullptr) {
-
+void DFS(Node* root) {
+	if (root != nullptr) {
+		Node* cur = root;
+		Node* prev = nullptr;
+		Node* next = nullptr;
+		while (cur != nullptr) {
+			if (prev == cur->parent) {
+				cout << cur->key << " -> ";
+				if (cur->left != nullptr)
+					next = cur->left;
+				else if (cur->right != nullptr)
+					next = cur->right;
+				else
+					next = cur->parent;
+			}
+			else if (prev == cur->left) {
+				if (cur->right != nullptr)
+					next = cur->right;
+				else
+					next = cur->parent;
+			}
+			else
+				next = cur->parent;
+			prev = cur;
+			cur = next;
+		}
 	}
 }
