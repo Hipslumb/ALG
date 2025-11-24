@@ -16,12 +16,14 @@ struct Node {
 	Node* parent;
 	Node* left;
 	Node* right;
+	int balance_factor;
 
 	Node(int val) {
 		key = val;
 		parent = nullptr;
 		left = nullptr;
 		right = nullptr;
+		balance_factor = 0;
 	}
 };
 
@@ -33,16 +35,28 @@ struct form {
 	~form() {
 		delete_tree(root);
 	}
-
+	//for BT
 	Node* search_node(Node* root, int key);
 
-	void insert(int key) { root = insert_node(root, key, nullptr); }
-	void delete_n(int key) { root = delete_node(root, key); }
+	void insert(int key) {
+		root = insert_node(root, key, nullptr); 
+	}
+	void delete_n(int key) { 
+		root = delete_node(root, key); 
+	}
 
 	Node* min_node(Node* root);
 	Node* max_node(Node* root);
-	int get_height(Node* root);
 
+	//for AVL
+	int count_balance(Node* node);
+	void update_balance(Node* node);
+
+	void balancing(Node*& node);
+	void rotate_right(Node*& x);
+	void rotate_left(Node*& x);
+	void big_right(Node*& node);
+	void big_left(Node*& node);
 
 
 private:
@@ -52,11 +66,3 @@ private:
 	void delete_tree(Node* node);
 
 }; 
-void pre_order(Node* root);
-void in_order(Node* root);
-void post_order(Node* root);
-void print_tree(Node* root, string space, bool left);
-
-void BFS(Node* root);
-void DFS(Node* root);
-void print_l(Node* root, int l);

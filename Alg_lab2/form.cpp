@@ -29,6 +29,7 @@ Node* form::insert_node(Node* root, int num, Node* p) {
 		root->left = insert_node(root->left, num, root);
 	else
 		root->right = insert_node(root->right, num, root);
+	root->balance_factor = count_balance(root);
 	return root;
 }
 
@@ -80,104 +81,10 @@ Node* form::delete_node(Node* root, int key) {
 		if (root->right != nullptr)
 			root->right->parent = root;
 	}
+	
+	balancing(root);
 	return root;
 }
 
-void print_tree(Node* root, string space, bool left) {
-
-	if (root != nullptr) {
-		cout << space + "|--";
-
-		cout << root->key;
-		if (root->parent == nullptr) cout << " (root)\n";
-		else cout << " (parent: " << root->parent->key << ")\n";
-
-		print_tree(root->left, space + (left ? "|   " : "    "), true);
-		print_tree(root->right, space + (left ? "|   " : "    "), false);
-
-	}
-
-}
-
-int max(int a, int b) {
-	return (a > b) ? a : b;
-}
-
-int form::get_height(Node* root) {
-
-	if (root == nullptr) return 0;
-
-	return 1 + max(get_height(root->left),get_height(root->right));
-}
 
 
-void pre_order(Node* root) {
-	if (root != nullptr) {
-		cout << root->key << " -> ";
-		pre_order(root->left);
-		pre_order(root->right);
-
-	}
-}
-void in_order(Node* root) {
-	if (root != nullptr) {
-		in_order(root->left);
-		cout << root->key << " -> ";
-		in_order(root->right);
-	}
-}
-void post_order(Node* root) {
-	if (root != nullptr) {
-		post_order(root->left);
-		post_order(root->right);
-		cout << root->key << " -> ";
-	}
-}
-
-void BFS(Node* root) {
-	form tree;
-	int hight = tree.get_height(root);
-	for (int l = 0;l < hight;l++) {
-		print_l(root, l);
-	}
-}
-void print_l(Node* node, int l) {
-	if (node != nullptr) {
-		if (l == 0) {
-			cout << node->key << " -> ";
-		}
-		else {
-			print_l(node->left, l - 1);
-			print_l(node->right, l - 1);
-		}
-	}
-}
-
-void DFS(Node* root) {
-	if (root != nullptr) {
-		Node* cur = root;
-		Node* prev = nullptr;
-		Node* next = nullptr;
-		while (cur != nullptr) {
-			if (prev == cur->parent) {
-				cout << cur->key << " -> ";
-				if (cur->left != nullptr)
-					next = cur->left;
-				else if (cur->right != nullptr)
-					next = cur->right;
-				else
-					next = cur->parent;
-			}
-			else if (prev == cur->left) {
-				if (cur->right != nullptr)
-					next = cur->right;
-				else
-					next = cur->parent;
-			}
-			else
-				next = cur->parent;
-			prev = cur;
-			cur = next;
-		}
-	}
-}

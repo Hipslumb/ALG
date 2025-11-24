@@ -1,4 +1,4 @@
-#include "Node.h"
+#include "Another.h"
 
 int main() {
 	form tree;
@@ -11,11 +11,15 @@ int main() {
 	tree.insert(110);
 	tree.insert(70);
 
-
 	cout << "BST:\n";
 	print_tree(tree.root, "", true);
 
-	cout << "\nHeight: " << tree.get_height(tree.root);
+	cout << "AVL:\n";
+	tree.balancing(tree.root);
+	print_tree(tree.root, "", true);
+
+
+	cout << "\nHeight: " << get_height(tree.root);
 	cout << "\nMIN: " << tree.min_node(tree.root)->key;
 	cout << "\nMAX: " << tree.max_node(tree.root)->key;
 
@@ -37,12 +41,14 @@ int main() {
 
 	cout << "\nBFS: "; BFS(tree.root); cout << "end";
 
-	cout << "\nDFS: "; DFS(tree.root); cout << "end";
-
 	tree.delete_n(20);
 	tree.delete_n(110);
 
 	cout << "\n\nBST after delete:\n";
+	print_tree(tree.root, "", true);
+
+	cout << "\n\nafter balancing:\n";
+	tree.balancing(tree.root);
 	print_tree(tree.root, "", true);
 
 	
