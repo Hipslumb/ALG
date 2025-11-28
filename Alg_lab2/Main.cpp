@@ -1,29 +1,14 @@
 #include "Another.h"
 
-int main() {
-	form tree;
-	tree.insert(50);
-	tree.insert(30);
-	tree.insert(20);
-	tree.insert(10);
-	tree.insert(100);
-	tree.insert(60);
-	tree.insert(110);
-	tree.insert(70);
+void filltree(form* this_tree, tree type) {
+	int arr[10] = { 20, 10, 110, 100, 50, 55, 70, 40, 15, 5 };
+	for (int i = 0; i < 10; i++) {
+		this_tree->insert(arr[i], type);
+	}
+}
 
-	cout << "BST:\n";
-	print_tree(tree.root, "", true);
-
-	cout << "AVL:\n";
-	tree.balancing(tree.root);
-	print_tree(tree.root, "", true);
-
-
-	cout << "\nHeight: " << get_height(tree.root);
-	cout << "\nMIN: " << tree.min_node(tree.root)->key;
-	cout << "\nMAX: " << tree.max_node(tree.root)->key;
-
-	Node* find = tree.search_node(tree.root,30);
+void searchresult(form& tree, int key) {
+	Node* find = tree.search_node(tree.root, key);
 
 	if (find != nullptr) {
 		cout << "\nSearch result: " << find->key
@@ -34,24 +19,33 @@ int main() {
 	else {
 		cout << "\nSearch result: null";
 	}
+}
 
-	cout << "\npre-order: "; pre_order(tree.root); cout << "end";
-	cout << "\nin-order: "; in_order(tree.root); cout << "end";
-	cout << "\npost-order: "; post_order(tree.root); cout << "end";
+void print_tree(Node* root, string space, bool left, tree tree) {
 
-	cout << "\nBFS: "; BFS(tree.root); cout << "end";
+	if (root != nullptr) {
+		cout << space + "|--";
 
-	tree.delete_n(20);
-	tree.delete_n(110);
+		cout << root->key;
+		if (root->parent == nullptr) cout << " (root";
+		else cout << " (parent: " << root->parent->key;
 
-	cout << "\n\nBST after delete:\n";
-	print_tree(tree.root, "", true);
+		if (tree == AVL) cout << ", b_f = " << root->balance_factor << ")\n";
+		else if (tree == RB) {
+			if (root->color == RED) cout << ", color = RED)\n";
+			else cout << ", color = BLACK)\n";
+		}
+		else cout << ")\n";
 
-	cout << "\n\nafter balancing:\n";
-	tree.balancing(tree.root);
-	print_tree(tree.root, "", true);
+		print_tree(root->left, space + (left ? "|   " : "    "), true, tree);
+		print_tree(root->right, space + (left ? "|   " : "    "), false, tree);
 
-	
+	}
+
+}
+
+int main() {
+	BTtree(); AVLtree(); //RBtree();
 	cout << "\n\n";
 	return 0;
 }

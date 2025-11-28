@@ -1,5 +1,6 @@
 #include "Another.h"
 
+
 int max(int a, int b) {
 	return (a > b) ? a : b;
 }
@@ -52,18 +53,3 @@ void print_l(Node* node, int l) {
 	}
 }
 
-void print_tree(Node* root, string space, bool left) {
-
-	if (root != nullptr) {
-		cout << space + "|--";
-
-		cout << root->key;
-		if (root->parent == nullptr) cout << " (root, b_f = " << root->balance_factor << ")\n";
-		else cout << " (parent: " << root->parent->key << ", b_f = " << root->balance_factor << ")\n";
-
-		print_tree(root->left, space + (left ? "|   " : "    "), true);
-		print_tree(root->right, space + (left ? "|   " : "    "), false);
-
-	}
-
-}

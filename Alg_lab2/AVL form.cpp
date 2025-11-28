@@ -9,75 +9,81 @@ int form::count_balance(Node* node) {
 }
 
 void form::update_balance(Node* node) {
-	if (node != nullptr) {
+	while (node != nullptr) {
 		node->balance_factor = count_balance(node);
-		update_balance(node->left);
-		update_balance(node->right);
+		node = node->parent;
 	}
 }
 
-void form::balancing(Node*& node) {
+void form::balancing(Node*& node, tree tree) {
 	if (node == nullptr) return;
-	update_balance(node);
+    balancing(node->left, tree);
+    balancing(node->right, tree);
 
-	if (node->balance_factor > 1) {
-		if (node->left->balance_factor >= 0) rotate_right(node);
-		else big_right(node);
+	if (node->balance_factor > 1 && node->left != nullptr) {
+		if (node->left->balance_factor >= 0) rotate_right(node,tree);
+		else big_right(node, tree);
 	}
-	else if (node->balance_factor < -1) {
-		if (node->right->balance_factor <= 0) rotate_left(node);
-		else big_left(node);
+	else if (node->balance_factor < -1 && node->right != nullptr) {
+		if (node->right->balance_factor <= 0) rotate_left(node,tree);
+		else big_left(node, tree);
 	}
-	balancing(node->left);
-	balancing(node->right);
 
-	node->balance_factor = count_balance(node);
+    update_balance(node);
+}
+void form::rotate_right(Node*& x, tree tree) {
+    if (x->left == nullptr) return;
+    Node* y = x->left;
+    x->left = y->right;
+    y->right = x;
+
+    if (x->left != nullptr) x->left->parent = x;
+
+    y->parent = x->parent;
+    x->parent = y;
+
+    if (y->parent != nullptr) {
+        if (y->parent->left == x) y->parent->left = y;
+        else y->parent->right = y;
+    }
+
+    if (AVL) {
+        update_balance(x);
+        update_balance(y);
+    }
+
+    x = y;
 }
 
-void form::rotate_right(Node*& x) {
-	if (x->left == nullptr) return;
+void form::rotate_left(Node*& x, tree tree) {
+    if (x->right == nullptr) return;
+    Node* y = x->right;
+    x->right = y->left;
+    y->left = x;
 
-	Node* y = x->left;
-	x->left = y->right;
+    if (x->right != nullptr) x->right->parent = x;
 
-	Node* tmp = y->right;
+    y->parent = x->parent;
+    x->parent = y;
 
-	y->right = x;
-	x->left = tmp;
+    if (y->parent != nullptr) {
+        if (y->parent->left == x) y->parent->left = y;
+        else y->parent->right = y;
+    }
 
-	if (tmp != nullptr) tmp->parent = x;
+    if (tree == AVL) {
+        update_balance(x);
+        update_balance(y);
+    }
 
-	y->parent = x->parent;
-	x->parent = y;
-	update_balance(x);
-	update_balance(y);
-	x = y;
+    x = y;
+}
+void form::big_right(Node*& node, tree tree) {
+	rotate_left(node->left,tree);
+	rotate_right(node,tree);
 }
 
-void form::rotate_left(Node*& x) {
-	if (x->right == nullptr) return;
-	Node* y = x->right;
-	x->right = y->left;
-	Node* tmp = y->left;
-
-	y->left = x;
-	x->right = tmp;
-
-	if (tmp != nullptr) tmp->parent = x;
-
-	y->parent = x->parent;
-	x->parent = y;
-	update_balance(x);
-	update_balance(y);
-	x = y;
-}
-
-void form::big_right(Node*& node) {
-	rotate_left(node->left);
-	rotate_right(node);
-}
-
-void form::big_left(Node*& node) {
-	rotate_right(node->right);
-	rotate_left(node);
+void form::big_left(Node*& node, tree tree) {
+	rotate_right(node->right,tree);
+	rotate_left(node,tree);
 }

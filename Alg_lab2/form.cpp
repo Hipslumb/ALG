@@ -19,17 +19,21 @@ Node* form::search_node(Node* root, int key) {
 	return search_node(root->left, key);
 }
 
-Node* form::insert_node(Node* root, int num, Node* p) {
+Node* form::insertAVLorBT(Node* root, int key, Node* p, tree tree) {
 	if (root == nullptr) {
-		Node* newnode = create_node(num);
+		Node* newnode = create_node(key);
 		newnode->parent = p;
 		return newnode;
 	}
-	if (num < root->key)
-		root->left = insert_node(root->left, num, root);
+	if (key < root->key)
+		root->left = insertAVLorBT(root->left, key, root, tree);
 	else
-		root->right = insert_node(root->right, num, root);
-	root->balance_factor = count_balance(root);
+		root->right = insertAVLorBT(root->right, key, root, tree);
+	//for AVL
+	if (tree == AVL) {
+		root->balance_factor = count_balance(root);
+		balancing(root, tree);
+	}
 	return root;
 }
 
@@ -47,17 +51,17 @@ Node* form::max_node(Node* root) {
 }
 
 
-Node* form::delete_node(Node* root, int key) {
+Node* form::delete_node(Node* root, int key, tree tree) {
 	if (root == nullptr) return root;
 
 	if (key < root->key) {
-		root->left = delete_node(root->left, key);
+		root->left = delete_node(root->left, key, tree);
 		if (root->left != nullptr) {
 			root->left->parent = root;
 		}
 	}
 	else if (key > root->key) {
-		root->right = delete_node(root->right, key);
+		root->right = delete_node(root->right, key, tree);
 		if (root->right != nullptr) {
 			root->right->parent = root;
 		}
@@ -77,12 +81,15 @@ Node* form::delete_node(Node* root, int key) {
 		}
 		tmp = min_node(root->right);
 		root->key = tmp->key;
-		root->right = delete_node(root->right, root->key);
+		root->right = delete_node(root->right, root->key, tree);
 		if (root->right != nullptr)
 			root->right->parent = root;
 	}
-	
-	balancing(root);
+	//for AVL
+	if (tree == AVL) {
+		root->balance_factor = count_balance(root);
+		balancing(root, tree);
+	}
 	return root;
 }
 

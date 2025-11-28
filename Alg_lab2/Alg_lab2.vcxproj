@@ -129,8 +129,12 @@
   <ItemGroup>
     <ClCompile Include="Another.cpp" />
     <ClCompile Include="AVL form.cpp" />
+    <ClCompile Include="AVL.cpp" />
+    <ClCompile Include="BT.cpp" />
     <ClCompile Include="form.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RandB form.cpp" />
+    <ClCompile Include="RB.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Another.h" />
