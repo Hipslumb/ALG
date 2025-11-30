@@ -46,15 +46,14 @@ void form::rotate_right(Node*& x, tree tree) {
         if (y->parent->left == x) y->parent->left = y;
         else y->parent->right = y;
     }
-
-    if (AVL) {
+    
+    if (tree == AVL) {
         update_balance(x);
         update_balance(y);
+        x = y;
     }
 
-    x = y;
 }
-
 void form::rotate_left(Node*& x, tree tree) {
     if (x->right == nullptr) return;
     Node* y = x->right;
@@ -70,19 +69,17 @@ void form::rotate_left(Node*& x, tree tree) {
         if (y->parent->left == x) y->parent->left = y;
         else y->parent->right = y;
     }
-
     if (tree == AVL) {
         update_balance(x);
         update_balance(y);
+        x = y;
     }
-
-    x = y;
 }
+
 void form::big_right(Node*& node, tree tree) {
 	rotate_left(node->left,tree);
 	rotate_right(node,tree);
 }
-
 void form::big_left(Node*& node, tree tree) {
 	rotate_right(node->right,tree);
 	rotate_left(node,tree);

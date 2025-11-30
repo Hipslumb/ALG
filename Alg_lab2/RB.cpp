@@ -1,14 +1,13 @@
 #include "Another.h"
 
-void RBtree() {
-	form tree;
-	filltree(&tree, RB);
+void form::RBtree() {
+	filltree(RB);
 
 	cout << "\n////////////////RnB:////////////////\n\n";
-	print_tree(tree.root, "", true, RB);
-	/*searchresult(tree, 100);
+	print_tree(root, "", true, RB);
+	searchresult(100);
 
-	tree.delete_n(5, RB);
+	/*tree.delete_n(5, RB);
 	tree.delete_n(55, RB);
 
 	cout << "\n\nafter delete:\n";

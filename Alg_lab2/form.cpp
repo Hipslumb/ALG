@@ -1,7 +1,7 @@
 ﻿#include "Node.h"
 
 void form::delete_tree(Node* node) {
-	if (node != nullptr) {
+	if (node != nullptr && node != psevdo) {
 		delete_tree(node->left);
 		delete_tree(node->right);
 		delete node;

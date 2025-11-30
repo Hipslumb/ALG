@@ -1,14 +1,14 @@
 #include "Another.h"
 
-void filltree(form* this_tree, tree type) {
+void form::filltree(tree type) {
 	int arr[10] = { 20, 10, 110, 100, 50, 55, 70, 40, 15, 5 };
 	for (int i = 0; i < 10; i++) {
-		this_tree->insert(arr[i], type);
+		insert(arr[i], type);
 	}
 }
 
-void searchresult(form& tree, int key) {
-	Node* find = tree.search_node(tree.root, key);
+void form::searchresult(int key) {
+	Node* find = search_node(root, key);
 
 	if (find != nullptr) {
 		cout << "\nSearch result: " << find->key
@@ -25,17 +25,23 @@ void print_tree(Node* root, string space, bool left, tree tree) {
 
 	if (root != nullptr) {
 		cout << space + "|--";
+		if (root->key == 0) cout << "nil\n";
+		else {
+			cout << root->key;
+			if (root->parent == nullptr) cout << " (root";
+			else { 
+				cout << " (parent: "; 
+				if (root->parent->key == 0) cout << "nil";
+				else cout << root->parent->key;
+			}
 
-		cout << root->key;
-		if (root->parent == nullptr) cout << " (root";
-		else cout << " (parent: " << root->parent->key;
-
-		if (tree == AVL) cout << ", b_f = " << root->balance_factor << ")\n";
-		else if (tree == RB) {
-			if (root->color == RED) cout << ", color = RED)\n";
-			else cout << ", color = BLACK)\n";
+			if (tree == AVL) cout << ", b_f = " << root->balance_factor << ")\n";
+			else if (tree == RB) {
+				if (root->color == RED) cout << ", RED)\n";
+				else cout << ", BLACK)\n";
+			}
+			else cout << ")\n";
 		}
-		else cout << ")\n";
 
 		print_tree(root->left, space + (left ? "|   " : "    "), true, tree);
 		print_tree(root->right, space + (left ? "|   " : "    "), false, tree);
@@ -45,7 +51,10 @@ void print_tree(Node* root, string space, bool left, tree tree) {
 }
 
 int main() {
-	BTtree(); AVLtree(); //RBtree();
+	form BT_tree(BT), AVL_tree(AVL), RB_tree(RB);
+	BT_tree.BTtree();
+	AVL_tree.AVLtree(); 
+	RB_tree.RBtree();
 	cout << "\n\n";
 	return 0;
 }
