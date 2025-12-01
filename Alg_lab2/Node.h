@@ -46,6 +46,7 @@ class form {
 	Node* create_node(int key);
 	Node* search_node(Node* root, int key);
 
+
 	Node* min_node(Node* root);
 	Node* max_node(Node* root);
 
@@ -66,6 +67,7 @@ class form {
 	void big_left(Node*& node, tree tree);
 
 	//for Red & Black
+	int blackHight(Node* node);
 	void fix_tree(Node* node);
 	Node* insertAVLorBT(Node* root, int key, Node* p, tree tree);
 	Node* insertRB(int key);
@@ -73,6 +75,9 @@ class form {
 	void rotate_rightRB(Node* x);
 	void rotate_leftRB(Node* x);
 	void deleteRB(int key);
+	void change_node(Node* x, Node* y);
+	
+	void fix_delete(Node* x);
 
 	void insert(int key, tree tree) {
 		switch (tree) {

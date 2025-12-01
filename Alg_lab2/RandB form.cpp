@@ -1,4 +1,4 @@
-#include "Another.h"
+﻿#include "Another.h"
 
 Node* form::insertRB(int key) {
 	Node* current = root;
@@ -19,7 +19,6 @@ Node* form::insertRB(int key) {
 	newNode->parent = parent;
 	newNode->left = psevdo;
 	newNode->right = psevdo;
-	newNode->color = RED;
 	if (parent != psevdo) {
 		if (key < parent->key)
 			parent->left = newNode;
@@ -132,29 +131,170 @@ void form::rotate_leftRB(Node* x) {
 	}
 }
 
+void form::change_node(Node* x, Node* y) {
+	if (x->parent == psevdo)
+		root = y;
+	else if (x == x->parent->left)
+		x->parent->left = y;
+	else
+		x->parent->right = y;
+	if (y != psevdo)
+		y->parent = x->parent;
+}
+int form::blackHight(Node* node) {
+	if (node == psevdo) return 1;
+	int left = blackHight(node->left);
+	int right = blackHight(node->right);
+	if (left != right) { 
+		cout << "\nWhong BH in " << node->key; 
+		return max(left, right);
+	}
+	if (node->color == BLACK) return 1 + left;
+	return left;
+}
+
 void form::deleteRB(int key) {
 	Node* node = search_node(root, key);
-	if (node->color == RED && node->left == psevdo && node->right == psevdo) {
-		if (node->parent == psevdo);
-		else {
-			Node* side = (node == node->parent->left) ? node->parent->left : node->parent->right;
-			side = psevdo;
+	if (node == nullptr || node == psevdo) return;
+
+	if (node->left == psevdo && node->right == psevdo) {
+		if (node == root) {
+			delete root;
+			root = psevdo;
 		}
-		delete node;
-		return;
-	}
-	if ((node->right->color == RED || node->left->color == RED)
-		&& (node->left == psevdo || node->right == psevdo)) {
-		Node* child = (node->left != psevdo) ? node->left : node->right;
-		child->parent = node->parent;
-		if (node->parent == psevdo);
 		else {
-			if (node == node->parent->left) node->parent->left = child;
-			else node->parent->right = child;
+			Node* parent = node->parent;
+			bool left = node == parent->left;
+
+
+			if (left) {
+				parent->left = psevdo;
+			}
+			else parent->right = psevdo;
+
+			if (node->color == BLACK) {
+				Node* tmp = new Node(-1);
+				tmp->parent = parent;
+				tmp->color = BLACK;
+				tmp->left = psevdo;
+				tmp->right = psevdo;
+				if (left) {
+					parent->left = tmp;
+				}
+				else parent->right = tmp;
+				delete node;
+				fix_delete(tmp);
+				if (left) {
+					parent->left = psevdo;
+				}
+				else parent->right = psevdo;
+				delete tmp;
+			}
+			else delete node;
 		}
-		delete node;
 		return;
 	}
 
+	if (node->left != psevdo && node->right == psevdo) {
+		Node* child = node->left;
+		change_node(node, child);
+
+		if (node->color == BLACK) 
+			fix_delete(child);
+		
+		delete node;
+	}
+	else if (node->right != psevdo && node->left == psevdo) {
+		Node* child = node->right;
+		change_node(node, child);
+		if (node->color == BLACK) 
+			fix_delete(child);
+		
+		delete node;
+	}
+	else {
+		Node* min = min_node(node->right);
+		color node_color = node->color;
+		color min_color = min->color;
+
+		int min_key = min->key;
+		deleteRB(min_key);
+		node->key = min_key;
+		node->color = node_color;
+
+		if (min_color == BLACK) {
+			fix_delete(node);
+		}
+	}
+}
+void form::fix_delete(Node* x) {
 	
+	while (x != root && x->color == BLACK) {
+		if (x == x->parent->left) {
+			
+			Node* bro = x->parent->right;
+			if (bro == psevdo) break;
+			//1
+			if (bro->color == RED) {
+				bro->color = BLACK;
+				x->parent->color = RED;
+				rotate_leftRB(x->parent);
+				bro = x->parent->right;
+			}
+			//2
+			if (bro->left->color == BLACK && bro->right->color == BLACK) {
+				bro->color = RED;
+				x = x->parent;
+			}
+			else {
+				//3
+				if (bro->right->color == BLACK) {
+					bro->left->color = BLACK;
+					bro->color = RED;
+					rotate_rightRB(bro);
+					bro = x->parent->right;
+				}
+				//4
+				bro->color = x->parent->color;
+				x->parent->color = BLACK;
+				bro->right->color = BLACK;
+				rotate_leftRB(x->parent);
+				x = root;
+			}
+
+		}
+		else {
+			Node* bro = x->parent->left;
+			if (bro == psevdo) break;
+			//1
+			if (bro->color == RED) {
+				bro->color = BLACK;
+				x->parent->color = RED;
+				rotate_rightRB(x->parent);
+				bro = x->parent->left;
+			}
+			//2
+			if (bro->left->color == BLACK && bro->right->color == BLACK) {
+				bro->color = RED;
+				x = x->parent;
+			}
+			else {
+				//3
+				if (bro->left->color == BLACK) {
+					bro->right->color = BLACK;
+					bro->color = RED;
+					rotate_leftRB(bro);
+					bro = x->parent->left;
+				}
+				//4
+				bro->color = x->parent->color;
+				x->parent->color = BLACK;
+				bro->left->color = BLACK;
+				rotate_rightRB(x->parent);
+				x = root;
+			}
+		}
+
+	}
+	x->color = BLACK;
 }

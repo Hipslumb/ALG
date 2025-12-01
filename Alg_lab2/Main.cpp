@@ -2,6 +2,7 @@
 
 void form::filltree(tree type) {
 	int arr[10] = { 20, 10, 110, 100, 50, 55, 70, 40, 15, 5 };
+	//int arr[10] = { 50, 30, 70, 20, 40, 60, 80, 10, 25, 35 };
 	for (int i = 0; i < 10; i++) {
 		insert(arr[i], type);
 	}
@@ -43,8 +44,8 @@ void print_tree(Node* root, string space, bool left, tree tree) {
 			else cout << ")\n";
 		}
 
-		print_tree(root->left, space + (left ? "|   " : "    "), true, tree);
-		print_tree(root->right, space + (left ? "|   " : "    "), false, tree);
+		print_tree(root->right, space + (left ? "|   " : "    "), true, tree);
+		print_tree(root->left, space + (left ? "|   " : "    "), false, tree);
 
 	}
 
@@ -55,6 +56,6 @@ int main() {
 	BT_tree.BTtree();
 	AVL_tree.AVLtree(); 
 	RB_tree.RBtree();
-	cout << "\n\n";
+	cout << "\nend process\n\n";
 	return 0;
 }

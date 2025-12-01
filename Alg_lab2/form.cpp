@@ -12,7 +12,7 @@ Node* form::create_node(int num) {
 }
 
 Node* form::search_node(Node* root, int key) {
-	if (root == nullptr || root->key == key)
+	if (root == nullptr || root == psevdo || root->key == key)
 		return root;
 	if (key > root->key)
 		return search_node(root->right, key);
@@ -24,6 +24,9 @@ Node* form::insertAVLorBT(Node* root, int key, Node* p, tree tree) {
 		Node* newnode = create_node(key);
 		newnode->parent = p;
 		return newnode;
+	}
+	if (key == root->key) {
+		return root;
 	}
 	if (key < root->key)
 		root->left = insertAVLorBT(root->left, key, root, tree);
@@ -38,18 +41,21 @@ Node* form::insertAVLorBT(Node* root, int key, Node* p, tree tree) {
 }
 
 Node* form::min_node(Node* root) {
+	if (root == nullptr) return nullptr;
+	if (root == psevdo) return psevdo;
 	Node* cur = root;
-	while (cur && cur->left != nullptr)
+	while (cur->left != psevdo && cur->left != nullptr)
 		cur = cur->left;
 	return cur;
 }
 Node* form::max_node(Node* root) {
+	if (root == nullptr) return nullptr;
+	if (root == psevdo) return psevdo;
 	Node* cur = root;
-	while (cur && cur->right != nullptr)
+	while (cur->right != psevdo && cur->right != nullptr)
 		cur = cur->right;
 	return cur;
 }
-
 
 Node* form::delete_node(Node* root, int key, tree tree) {
 	if (root == nullptr) return root;
