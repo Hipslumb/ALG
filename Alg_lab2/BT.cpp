@@ -6,7 +6,7 @@ void form::BTtree() {
 	cout << "\n////////////////BST:////////////////\n\n";
 	print_tree(root, "", true, BT);
 
-	cout << "\nHeight: " << get_height(root);
+	cout << "\nHeight: " << get_height(root, nullptr);
 	cout << "\nMIN: " << min_node(root)->key;
 	cout << "\nMAX: " << max_node(root)->key;
 

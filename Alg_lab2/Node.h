@@ -41,10 +41,8 @@ public:
 };
 
 class form {
-	Node* root; Node* psevdo;
 
 	Node* create_node(int key);
-	Node* search_node(Node* root, int key);
 
 
 	Node* min_node(Node* root);
@@ -79,20 +77,12 @@ class form {
 	
 	void fix_delete(Node* x);
 
-	void insert(int key, tree tree) {
-		switch (tree) {
-		case BT:
-			root = insertAVLorBT(root, key, nullptr, BT); break;
-		case AVL:
-			root = insertAVLorBT(root, key, nullptr, AVL); break;
-		case RB:
-			root = insertRB(key); break;
-		}
-	}
 	void delete_n(int key, tree tree) {
 		root = delete_node(root, key, tree);
 	}
+
 public:
+	Node* root; Node* psevdo;
 	form(tree tree) {
 		if (tree == RB) {
 			psevdo = new Node(0);
@@ -111,6 +101,18 @@ public:
 		}
 	}
 
+	void insert(int key, tree tree) {
+		switch (tree) {
+		case BT:
+			root = insertAVLorBT(root, key, nullptr, BT); break;
+		case AVL:
+			root = insertAVLorBT(root, key, nullptr, AVL); break;
+		case RB:
+			root = insertRB(key); break;
+		}
+	}
+
+	Node* search_node(Node* root, int key);
 	void BTtree();
 	void AVLtree();
 	void RBtree();

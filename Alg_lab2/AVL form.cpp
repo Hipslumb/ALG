@@ -2,8 +2,8 @@
 
 int form::count_balance(Node* node) {
 	if (node == nullptr) return 0;
-	int height_left = get_height(node->left);
-	int height_right = get_height(node->right);
+	int height_left = get_height(node->left,nullptr);
+	int height_right = get_height(node->right,nullptr);
 
 	return height_left - height_right;
 }

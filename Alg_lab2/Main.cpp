@@ -44,18 +44,24 @@ void print_tree(Node* root, string space, bool left, tree tree) {
 			else cout << ")\n";
 		}
 
-		print_tree(root->right, space + (left ? "|   " : "    "), true, tree);
-		print_tree(root->left, space + (left ? "|   " : "    "), false, tree);
+		print_tree(root->left, space + (left ? "|   " : "    "), true, tree);
+		print_tree(root->right, space + (left ? "|   " : "    "), false, tree);
 
 	}
 
 }
-
 int main() {
 	form BT_tree(BT), AVL_tree(AVL), RB_tree(RB);
 	BT_tree.BTtree();
 	AVL_tree.AVLtree(); 
 	RB_tree.RBtree();
+
+	//experiment(BT);
+	//experiment(AVL);
+	//experiment(RB);
+	//monoton_experiment(AVL);
+	//monoton_experiment(RB);
+
 	cout << "\nend process\n\n";
 	return 0;
 }

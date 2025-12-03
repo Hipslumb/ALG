@@ -5,11 +5,11 @@ int max(int a, int b) {
 	return (a > b) ? a : b;
 }
 
-int get_height(Node* root) {
+int get_height(Node* root, Node* psevdo) {
 
-	if (root == nullptr) return 0;
+	if (root == nullptr || root == psevdo) return 0;
 
-	return 1 + max(get_height(root->left), get_height(root->right));
+	return 1 + max(get_height(root->left, psevdo), get_height(root->right, psevdo));
 }
 
 void pre_order(Node* root) {
@@ -36,7 +36,7 @@ void post_order(Node* root) {
 }
 
 void BFS(Node* root) {
-	int hight = get_height(root);
+	int hight = get_height(root, nullptr);
 	for (int l = 0;l < hight;l++) {
 		print_l(root, l);
 	}

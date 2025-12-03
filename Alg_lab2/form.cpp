@@ -41,16 +41,14 @@ Node* form::insertAVLorBT(Node* root, int key, Node* p, tree tree) {
 }
 
 Node* form::min_node(Node* root) {
-	if (root == nullptr) return nullptr;
-	if (root == psevdo) return psevdo;
+	if (root == nullptr || root == psevdo) return root;
 	Node* cur = root;
 	while (cur->left != psevdo && cur->left != nullptr)
 		cur = cur->left;
 	return cur;
 }
 Node* form::max_node(Node* root) {
-	if (root == nullptr) return nullptr;
-	if (root == psevdo) return psevdo;
+	if (root == nullptr || root == psevdo) return root;
 	Node* cur = root;
 	while (cur->right != psevdo && cur->right != nullptr)
 		cur = cur->right;
@@ -98,6 +96,3 @@ Node* form::delete_node(Node* root, int key, tree tree) {
 	}
 	return root;
 }
-
-
-
