@@ -1,5 +1,5 @@
 #pragma once
-#define STB_IMAGE_IMPLEMENTATION
+
 #include "stb_image.h"
 #include <fstream>
 #include <iostream>
@@ -9,13 +9,14 @@ using namespace std;
 
 class Image
 {
+public:
 	int width;
 	int height;
 	int pixel; //1 - rw or grey, 3 - RGB
 	int type; //0 - rw, 1 - grey, 2 - RGB
 	unsigned char* data;
+	int data_size;
 
-public:
 	Image() {
 		data = nullptr;
 	}
@@ -28,7 +29,7 @@ public:
 
 };
 
-bool Image::load(const char* name) {
+inline bool Image::load(const char* name) {
 	data = stbi_load(name, &width, &height, &pixel, 0);
 	if (data == nullptr) return false;
 	if (pixel == 1) {
@@ -44,7 +45,7 @@ bool Image::load(const char* name) {
 	return true;
 }
 
-void Image::save(const char* name) {
+inline void Image::save(const char* name) {
 	ofstream file(name, ios::binary);
 	file.write((char*)&width, 4);
 	file.write((char*)&height, 4);
@@ -54,7 +55,7 @@ void Image::save(const char* name) {
 	file.close();
 }
 
-void Image::compare(const char* name,const char* rawname) {
+inline void Image::compare(const char* name,const char* rawname) {
 	ifstream orig(name, ios::binary | ios::ate);
 	ifstream raw(rawname, ios::binary| ios::ate);
 
@@ -64,4 +65,6 @@ void Image::compare(const char* name,const char* rawname) {
 	orig.close(); raw.close();
 
 	cout << "PNG/RAW: k = " << double(orig_size) / (raw_size) << "\n";
+
+	data_size = raw_size - 10;
 }
