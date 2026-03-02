@@ -36,12 +36,14 @@ int main() {
 	const char* raw = "out.raw";
 	if (img.load(original)) {
 		img.save(raw);
-		printHEX(raw, 1000);
+		//printHEX(raw, 1000);
 	}
 	img.compare(original, raw);cout << "\n\n";
+	
 
+	unsigned char* a = new unsigned char[7] {4, 4, 0, 1, 3, 3, 5};
 	int ensize,desize;
-	unsigned char* rle_en = rle_encoding(img.data, img.data_size,ensize);
+	unsigned char* rle_en = rle_encoding(/*img.data*/a, 7/*img.data_size*/,ensize);
 	for (int i = 0;i < ensize;i++)
 		HEX(rle_en[i]);
 
