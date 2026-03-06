@@ -1,63 +1,84 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "functions.h"
 
-unsigned char* rle_encoding(unsigned char* data, int size, int& outsize) {
-	unsigned char* encoded = new unsigned char[size * 2];
-	int i = 0, pos = 0; outsize = 0;
+bool same_symbol(unsigned char* data, int pos1, int pos2, int bytes) {
+	for (int i = 0; i < bytes; i++)
+		if (data[pos1 + i] != data[pos2 + i])
+			return false;
+	return true;
+}
+
+vector<unsigned char> rle_encoding(vector<unsigned char> data, int Ms, int Mc) {
+	vector<unsigned char> encoded;
+	int i = 0; int size = data.size();
+
+	int Ms_byte = Ms / 8; int Mc_byte = Mc / 8;
+	int max_count = (1 << (Mc - 1)) - 1;
+
 	while (i < size) {
 		int k = 1;
-		if (i + 1 < size && data[i] == data[i + 1]) {
-			while (k < 127 && i + k < size && data[i] == data[i + k]) {
+		if (i + Ms_byte < size && same_symbol(data.data(), i, i + Ms_byte, Ms_byte)) {
+
+			while (k < max_count && i + (k + 1) * Ms_byte <= size
+				&& same_symbol(data.data(), i, i + k * Ms_byte, Ms_byte))
 				k++;
-			}
-			encoded[pos++] = k;
-			encoded[pos++] = data[i];
-			i += k;
+
+			for (int b = 0; b < Mc_byte; b++)
+				encoded.push_back((k >> (8 * (Mc_byte - 1 - b))) & 0xFF);
+
+			for (int b = 0; b < Ms_byte; b++)
+				encoded.push_back(data[i + b]);
+
 		}
 		else {
-			while (k < 127 && i + k + 1 < size && data[i + k] != data[i + k + 1]) {
+			while (k < max_count && i + (k + 1) * Ms_byte <= size
+				&& !same_symbol(data.data(), i + k * Ms_byte, i + (1 + k) * Ms_byte, Ms_byte))
 				k++;
-			}
-			encoded[pos++] = k | 0x80; //or k + 128
-			for (int j = 0; j < k; j++) {
-				encoded[pos++] = data[i++];
-			}
+
+			int flag = k | (1 << (Mc - 1));
+			for (int b = Mc_byte - 1; b >= 0; b--)
+				encoded.push_back((flag >> (8 * b)) & 0xFF);
+
+
+			for (int j = 0; j < k; j++)
+				for (int b = 0;b < Ms_byte;b++)
+					encoded.push_back(data[i + j * Ms_byte + b]);
+
 		}
+		i += k * Ms_byte;
 	}
-	outsize = pos;
 	return encoded;
 }
 
-unsigned char* rle_decoding(unsigned char* encoded, int size, int& outsize) {
-	outsize = 0;
-	
-	for (int i = 0; i < size; ) {
-		int k = (int)encoded[i];
-		if ((k & 0x80) == 0) {
-			outsize += k;
-			i += 2;
-		}
-		else {
-			outsize += k ^ 0x80;
-			i += 1 + (k ^ 0x80);
-		}
-	}
-	unsigned char* decoded = new unsigned char[outsize];
+vector<unsigned char> rle_decoding(vector<unsigned char> encoded, int Ms, int Mc) {
 
-	int i = 0, pos = 0;
+	int Ms_byte = Ms / 8; int Mc_byte = Mc / 8;
+	vector<unsigned char> decoded;
+
+	int i = 0, pos = 0; int size = encoded.size();
 	while (i < size) {
-		int k = (int)encoded[i];
-		if ((k & 0x80) == 0) {
+		int k = 0;
+        for (int b = 0; b < Mc_byte; b++) {
+            k = (k << 8) | encoded[i + b];
+        }
+		i += Mc_byte;
+
+		int flag = 1 & (k >> (Mc - 1));
+		if (flag == 0) {//repeat
+			
 			for (int j = 0; j < k; j++) {
-				decoded[pos++] = encoded[i + 1];
+				for (int b = 0; b < Ms_byte; b++)
+					decoded.push_back(encoded[i + b]);
 			}
-			i += 2;
+			i += Ms_byte;
 		}
 		else {
-			for (int j = 0; j < (k ^ 0x80); j++) {
-				decoded[pos++] = encoded[i + 1 + j];
+			int len = (k & ((1 << (Mc - 1)) - 1));
+			for (int j = 0; j < len; j++) {
+				for (int b = 0; b < Ms_byte; b++)
+					decoded.push_back(encoded[i + b + j * Ms_byte]);
 			}
-			i += (k ^ 0x80) + 1;
+			i += Ms_byte * len;
 		}
 	}
 	return decoded;
