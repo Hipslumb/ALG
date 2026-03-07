@@ -2,11 +2,11 @@
 #include "functions.h"
 
 struct Node {
-	unsigned char sym;
+	uc sym;
 	int freq;
 	Node* left;
 	Node* right;
-	Node(unsigned char s, int f) :
+	Node(uc s, int f) :
 		sym(s), freq(f), left(nullptr), right(nullptr) {}
 };
 
@@ -18,7 +18,7 @@ struct compare {
 
 class tree {
 	Node* root;
-	map<unsigned char, string> codes;
+	map<uc, string> codes;
 
 	void clear(Node* node);
 
@@ -27,9 +27,9 @@ public:
 	~tree() {
 		clear(root);
 	}
-	void frequency_tree(map<unsigned char, int> freq);
-	vector<unsigned char> Huf_encoding(vector<unsigned char> data);
-	vector<unsigned char> Huf_decoding(vector<unsigned char> encoded);
+	void frequency_tree(map<uc, int> freq);
+	vector<uc> Huf_encoding(vector<uc> data);
+	vector<uc> Huf_decoding(vector<uc> encoded);
 	void get_bits(Node* root, string code);
 
 };

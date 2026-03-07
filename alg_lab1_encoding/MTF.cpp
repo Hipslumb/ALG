@@ -1,16 +1,16 @@
 #include "functions.h"
 
-vector<unsigned char> mtf_encoding(vector<unsigned char> data) {
-	vector<unsigned char> encoded;
-	vector<unsigned char> dict(256);
+vector<uc> mtf_encoding(vector<uc> data) {
+	vector<uc> encoded;
+	vector<uc> dict(256);
 	for (int i = 0; i < 256; i++) {
-		dict[i] = (unsigned char)i;
+		dict[i] = (uc)i;
 	}
-	for (unsigned char sym : data) {
+	for (uc sym : data) {
 		auto i = find(dict.begin(), dict.end(), sym);
 		int pos = i - dict.begin();
 
-		encoded.push_back((unsigned char)pos);
+		encoded.push_back((uc)pos);
 
 		dict.erase(i);
 		dict.insert(dict.begin(), sym);
@@ -18,15 +18,15 @@ vector<unsigned char> mtf_encoding(vector<unsigned char> data) {
 
 	return encoded;
 }
-vector<unsigned char> mtf_decoding(vector<unsigned char> encoded) {
-	vector<unsigned char> decoded;
-	vector<unsigned char> dict(256);
+vector<uc> mtf_decoding(vector<uc> encoded) {
+	vector<uc> decoded;
+	vector<uc> dict(256);
 	for (int i = 0; i < 256; i++) {
-		dict[i] = (unsigned char)i;
+		dict[i] = (uc)i;
 	}
-	for (unsigned char num : encoded) {
+	for (uc num : encoded) {
 		auto i = dict.begin() + num;
-		unsigned char sym = *i;
+		uc sym = *i;
 
 		decoded.push_back(sym);
 		dict.erase(i);

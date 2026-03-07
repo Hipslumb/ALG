@@ -1,6 +1,6 @@
 #include "functions.h"
 
-double entropy(vector<unsigned char> text, int bytes) {
+double entropy(vector<uc> text, int bytes) {
 	
 	int size = text.size() / bytes;
 	map<string, int> sym;
@@ -23,12 +23,12 @@ double entropy(vector<unsigned char> text, int bytes) {
 }
 
 void func_H() {
-	ifstream in("D:/Documents/Study/2 курс/АЛГ/encoding/Alice.txt", ios::binary);
-	ofstream out("D:/Documents/Study/2 курс/АЛГ/encoding/english.txt", ios::binary);
+	ifstream in((string)mf + "Alice.txt", ios::binary);
+	ofstream out((string)mf + "english.txt", ios::binary);
 
 	char cur;
 	while (in.get(cur)) {
-		if ((unsigned char)cur < 128) {
+		if ((uc)cur < 128) {
 			out.put(cur);
 		}
 	}
@@ -36,19 +36,16 @@ void func_H() {
 	in.close(); out.close();
 	const int max = 1024 * 1024;
 
-	ifstream file("D:/Documents/Study/2 курс/АЛГ/encoding/english.txt", ios::binary | ios::ate);
-	if (!file.is_open()) {
-		cout << "Не могу открыть english.txt" << endl;
-		return;
-	}
+	ifstream file((string)mf + "english.txt", ios::binary | ios::ate);
+	
 	int size = file.tellg();
 
 	file.seekg(0, ios::beg);
-	vector<unsigned char> text(size);
+	vector<uc> text(size);
 	file.read(reinterpret_cast<char*>(text.data()), size);
 	file.close();
 
-	ofstream f("D:/Documents/Study/2 курс/АЛГ/encoding/entropy", ios::binary);
+	ofstream f((string)mf + "entropy", ios::binary);
 
 	for (int n = 1; n < 128; n++) {
 		double H = entropy(text, n);

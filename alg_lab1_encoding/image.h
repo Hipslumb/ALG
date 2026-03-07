@@ -1,15 +1,4 @@
-#pragma once
-
-#include "stb_image.h"
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <vector>
-#include <map>
-#include <queue>
-using namespace std;
-
+#include "Header.h"
 class Image
 {
 public:
@@ -17,7 +6,7 @@ public:
 	int height;
 	int pixel; //1 - rw or grey, 3 - RGB
 	int type; //0 - rw, 1 - grey, 2 - RGB
-	unsigned char* data;
+	uc* data;
 	int data_size;
 
 	Image() {

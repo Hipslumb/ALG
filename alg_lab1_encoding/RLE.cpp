@@ -1,15 +1,14 @@
-#define STB_IMAGE_IMPLEMENTATION
 #include "functions.h"
 
-bool same_symbol(unsigned char* data, int pos1, int pos2, int bytes) {
+bool same_symbol(uc* data, int pos1, int pos2, int bytes) {
 	for (int i = 0; i < bytes; i++)
 		if (data[pos1 + i] != data[pos2 + i])
 			return false;
 	return true;
 }
 
-vector<unsigned char> rle_encoding(vector<unsigned char> data, int Ms, int Mc) {
-	vector<unsigned char> encoded;
+vector<uc> rle_encoding(vector<uc> data, int Ms, int Mc) {
+	vector<uc> encoded;
 	int i = 0; int size = data.size();
 
 	int Ms_byte = Ms / 8; int Mc_byte = Mc / 8;
@@ -50,10 +49,10 @@ vector<unsigned char> rle_encoding(vector<unsigned char> data, int Ms, int Mc) {
 	return encoded;
 }
 
-vector<unsigned char> rle_decoding(vector<unsigned char> encoded, int Ms, int Mc) {
+vector<uc> rle_decoding(vector<uc> encoded, int Ms, int Mc) {
 
 	int Ms_byte = Ms / 8; int Mc_byte = Mc / 8;
-	vector<unsigned char> decoded;
+	vector<uc> decoded;
 
 	int i = 0, pos = 0; int size = encoded.size();
 	while (i < size) {

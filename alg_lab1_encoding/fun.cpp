@@ -1,9 +1,10 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "functions.h"
 
 void from9_to7() {
 	//here i made enwik7 from enwik9 (cutting file)
-	ifstream in("D:/Documents/Study/2 êóðñ/ÀËÃ/encoding/enwik9", ios::binary);
-	ofstream out("D:/Documents/Study/2 êóðñ/ÀËÃ/encoding/enwik7", ios::binary);
+	ifstream in((string)mf + "enwik9", ios::binary);
+	ofstream out((string)mf + "enwik7", ios::binary);
 	long long size7 = 10000000;
 	static char buf[1024 * 1024];
 	while (size7 > 0) {
@@ -14,13 +15,13 @@ void from9_to7() {
 	}
 }
 
-void HEX(unsigned char a) {
+void HEX(uc a) {
 	cout << "0x" << setw(2) << setfill('0') << hex << (int)a << " ";
 }
 
 void printHEX(const char* name, int max, bool text) {
 	ifstream file(name, ios::binary);
-	unsigned char byte;
+	uc byte;
 	int k = 0;
 	while (file.read((char*)&byte, 1) && k < max) {
 		HEX(byte);

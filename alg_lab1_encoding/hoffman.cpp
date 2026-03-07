@@ -1,8 +1,8 @@
 #include "Huffman.h"
 
-map<unsigned char, int> frequency(vector<unsigned char> data) {
-	map<unsigned char, int> freq;
-	for (unsigned char sym : data) {
+map<uc, int> frequency(vector<uc> data) {
+	map<uc, int> freq;
+	for (uc sym : data) {
 		freq[sym]++;
 	}
 	return freq;
@@ -20,7 +20,7 @@ void tree::get_bits(Node* root, string code) {
 	get_bits(root->right, code + "1");
 }
 
-void tree::frequency_tree(map<unsigned char, int> freq) {
+void tree::frequency_tree(map<uc, int> freq) {
 	priority_queue<Node*, vector<Node*>, compare> queue;
 	for (auto p : freq) {
 		queue.push(new Node(p.first, p.second));
@@ -38,8 +38,8 @@ void tree::frequency_tree(map<unsigned char, int> freq) {
 	get_bits(root, "");
 }
 
-vector<unsigned char> tree::Huf_encoding(vector<unsigned char> data) {
-	vector<unsigned char> encoded;
+vector<uc> tree::Huf_encoding(vector<uc> data) {
+	vector<uc> encoded;
 	string bits;
 	for (auto b : data) {
 		bits += codes[b];
@@ -48,7 +48,7 @@ vector<unsigned char> tree::Huf_encoding(vector<unsigned char> data) {
 	encoded.push_back(last_size);
 
 	for (int i = 0; i < bits.size(); i += 8) {
-		unsigned char byte = 0;
+		uc byte = 0;
 		for (int j = 0; j < 8 && i + j < bits.size();j++)
 			if (bits[i + j] == '1')
 				byte |= (1 << (7 - j));
@@ -59,12 +59,12 @@ vector<unsigned char> tree::Huf_encoding(vector<unsigned char> data) {
 	return encoded;
 }
 
-vector<unsigned char> tree::Huf_decoding(vector<unsigned char> encoded) {
-	vector<unsigned char> decoded;
+vector<uc> tree::Huf_decoding(vector<uc> encoded) {
+	vector<uc> decoded;
 	int last_size = encoded[0];
 	string bits;
 	for (int i = 1; i < encoded.size(); i++) {
-		unsigned char b = encoded[i];
+		uc b = encoded[i];
 		for (int j = 7; j >= 0; j--) {
 			bits += ((b >> j) & 1) ? '1' : '0';
 		}
@@ -86,8 +86,8 @@ vector<unsigned char> tree::Huf_decoding(vector<unsigned char> encoded) {
 	return decoded;
 }
 
-void save_file(vector<unsigned char> encoded, map<unsigned char, int>& freq) {
-	ofstream file("D:/Documents/Study/2 курс/АЛГ/encoding/hufencoded", ios::binary);
+void save_file(vector<uc> encoded, map<uc, int>& freq) {
+	ofstream file((string)mf + "hufencoded", ios::binary);
 	int size = freq.size();
 	file.write((char*)&size, sizeof(size));
 	for (auto& p : freq) {
@@ -101,14 +101,14 @@ void save_file(vector<unsigned char> encoded, map<unsigned char, int>& freq) {
 	file.close();
 }
 
-vector<unsigned char> read_file(map<unsigned char, int>& freq) {
-	ifstream file("D:/Documents/Study/2 курс/АЛГ/encoding/hufencoded", ios::binary);
-	vector<unsigned char> encoded;
+vector<uc> read_file(map<uc, int>& freq) {
+	ifstream file((string)mf + "hufencoded", ios::binary);
+	vector<uc> encoded;
 
 	int size;
 	file.read((char*)&size, sizeof(size));
 	for (int i = 0; i < size; i++) {
-		unsigned char sym;
+		uc sym;
 		int f;
 		file.read((char*)&sym, sizeof(sym));
 		file.read((char*)&f, sizeof(f));
