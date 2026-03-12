@@ -19,7 +19,7 @@ void HEX(uc a) {
 	cout << "0x" << setw(2) << setfill('0') << hex << (int)a << " ";
 }
 
-void printHEX(const char* name, int max, bool text) {
+void printHEX(const char*  name, int max, bool text) {
 	ifstream file(name, ios::binary);
 	uc byte;
 	int k = 0;
@@ -30,4 +30,14 @@ void printHEX(const char* name, int max, bool text) {
 		k++;
 	}
 	cout << "\n";
+}
+
+vector<uc> load_data(string file) {
+	ifstream in(file, ios::binary);
+	vector<uc> data; char sym;
+	while (in.get(sym)) {
+		data.push_back((uc)sym);
+	}
+	in.close();
+	return data;
 }

@@ -2,9 +2,13 @@
 //#include "image.h"
 
 void create_raw() {
-	const char* original = "D:/Documents/Study/2 курс/АЛГ/encoding/Безымянный.png";
+	string path = (string)mf + "Безымянный.png";
+	const char* original = path.c_str();
 	Image img;
-	const char* raw = "D:/Documents/Study/2 курс/АЛГ/encoding/out.raw";
+
+	path = (string)mf + "out.raw";
+	const char* raw = path.c_str();
+
 	if (img.load(original)) {
 		img.save(raw);
 		printHEX(raw, 1000, 0);
@@ -44,10 +48,7 @@ void MTF() {
 }
 
 void Huffman() {
-	ifstream out((string)mf + "english.txt", ios::binary);
-	vector<uc> data; char cur;
-	while (out.get(cur))
-		data.push_back((uc)cur);
+	vector<uc> data = load_data((string)mf + "english.txt");
 
 	tree Huf;
 	map<uc, int> freq = frequency(data);
@@ -56,7 +57,9 @@ void Huffman() {
 	cout << "HUFFMAN K = " << (double)data.size() / encoded.size() << "\n";
 	save_file(encoded, freq);
 
-	printHEX("D:/Documents/Study/2 курс/АЛГ/encoding/hufencoded",128, 1);
+	string path = (string)mf + "hufencoded";
+
+	printHEX(path.c_str(), 128, 1);
 	cout << "\n\n";
 	tree deHuf;
 	map<uc, int> load_f;
@@ -66,20 +69,29 @@ void Huffman() {
 	for (int i = 0;i < 128;i++)
 		HEX(decoded[i]);
 	cout << "\n\n";
-	out.close();
+
 }
 
 void Arithmetic() {
-	ifstream in((string)mf + "abcd.txt", ios::binary);
-	vector<uc> data; char sym;
-	while (in.get(sym)) {
-		data.push_back((uc)sym);
-	}
-	in.close();
+	
+	vector<uc> data = load_data((string)mf + "abcd.txt");
 	map<uc, double> prob = probability(data);
 	cout << "\nArith_encoded: " << arith_encoding(data, prob);
 }
 
+void BWT() {
+	vector<uc> data = load_data((string)mf + "abcd.txt");
+	BWTnode encoded = bwt_encoding(data);
+	cout << "\nBWT_encoded: ";
+	for (int i = 0;i < data.size();i++)
+		HEX(encoded.L[i]);
+	cout << "orig index: " << encoded.I;
+
+	cout << "\nBWT_decoded: ";
+	vector<uc> decoded = bwt_decoding_LF(encoded);
+	for (int i = 0;i < data.size();i++)
+		HEX(decoded[i]);
+}
 int main() {
 	cout << "\n\n";
 	//create_raw();
@@ -87,7 +99,8 @@ int main() {
 	//func_H();
 	//MTF();
 	//Huffman();
-	Arithmetic();
+	//Arithmetic();
+	BWT();
 	cout << "\n\n";
 	return 0;
 }
