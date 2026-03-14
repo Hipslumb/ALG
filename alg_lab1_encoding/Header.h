@@ -8,6 +8,8 @@
 #include <vector>
 #include <map>
 #include <queue>
+#include <algorithm>
+#include <list>
 #define uc unsigned char
 #define mf "D:/Documents/Study/2 курс/АЛГ/encoding/"
 using namespace std;

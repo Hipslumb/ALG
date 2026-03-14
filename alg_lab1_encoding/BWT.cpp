@@ -152,3 +152,29 @@ vector<uc> decoding_blocks(vector<BWTnode>& blocks) {
 
 	return decoded;
 }
+
+vector<int> suff_vector(vector <uc> data) {
+	int N = data.size();
+	vector<int> suf_vect(N);
+	for (int i = 0;i < N;i++) suf_vect[i] = i;
+
+	sort(suf_vect.begin(), suf_vect.end(), [&](int a, int b) {
+		while (a < N && b < N) {
+			if (data[a] != data[b])
+				return data[a] < data[b];
+			a++;
+			b++;
+		}
+		return a > b;
+	});
+	return suf_vect;
+}
+
+vector<uc> find_last(vector <uc> data) {
+	int N = data.size();
+	vector<int> suf_vect = suff_vector(data);
+	vector<uc> last(N);
+	for (int i = 0; i < N; i++) 
+		last[i] = data[(suf_vect[i] + N - 1) % N];
+	return last;
+}

@@ -35,3 +35,16 @@ vector <uc> bwt_decoding_matrix(BWTnode encoded);
 vector <uc> bwt_decoding_LF(BWTnode encoded);
 vector<BWTnode> encoding_blocks(vector<uc>& data, int b_size);
 vector<uc> decoding_blocks(vector<BWTnode>& blocks);
+
+vector<int> suff_vector(vector <uc> data);
+vector<uc> find_last(vector <uc> data);
+
+struct LZnode {
+	int offset = 0;
+	int len = 0;
+	uc next;
+};
+
+list<LZnode> lz77_encoding(vector<uc> data, int buf_size);
+vector<uc> pack_lz(list<LZnode> data, int off_bytes, int len_bytes, int size);
+vector<uc> lz77_decoding(vector<uc> encoded, int off_bytes, int len_bytes);
