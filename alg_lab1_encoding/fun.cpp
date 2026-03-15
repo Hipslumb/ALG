@@ -41,3 +41,16 @@ vector<uc> load_data(string file) {
 	in.close();
 	return data;
 }
+
+void packing(vector<uc>& out, int integer, int bytes) {
+	for (int i = 0; i < bytes; i++) {
+		out.push_back(static_cast<uc>(integer & 0xff));
+		integer >>= 8;
+	}
+}
+void unpacking(vector<uc> in, int& integer, int bytes, int& pos) {
+	for (int i = 0; i < bytes; i++) {
+		integer |= (in[pos + i] << (8 * i));
+	}
+	pos += bytes;
+}

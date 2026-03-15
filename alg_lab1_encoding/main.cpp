@@ -99,25 +99,44 @@ void BWT() {
 
 void LZ() {
 	vector<uc> data = load_data((string)mf + "abcd.txt");
-	cout << "\n    original: ";
-	for (int i = 0;i < data.size();i++)
-		HEX(data[i]);
 
-	cout << "\nLZ77_encoded: ";
-	list<LZnode> en_list = lz77_encoding(data, 4);
-	/*for (auto e : en_list) {
-		cout << "(" << e.offset << "," << e.len << "," << e.next << ")";
-	}*/
+	//LZSS (updated LZ77)
+	list<LZ77node> en_list_7 = lz77_encoding(data, 4);
 	int off = 2;int len = 1;
-	vector<uc> encoded = pack_lz(en_list, off, len, data.size());
-	for (int i = 0;i < encoded.size();i++)
+	vector<uc> encoded = pack_lz77(en_list_7, off, len, data.size());
+	cout << "\nsize: ";
+	for (int i = 0;i < 4;i++)
 		HEX(encoded[i]);
 
-	cout << "\nLZ77_decoded: ";
+	cout << "\nLZSS_encoded: ";
+	for (int i = 4;i < encoded.size();i++)
+		HEX(encoded[i]);
+
+	cout << "\nLZSS_decoded: ";
 	vector<uc> decoded = lz77_decoding(encoded,off,len);
 	for (int i = 0;i < decoded.size();i++)
 		HEX(decoded[i]);
+	cout << "\n\n    original: ";
+	for (int i = 0;i < data.size();i++)
+		HEX(data[i]);
 	cout << "\n";
+
+	//LZW (updated LZ78)
+	list<LZ78node> en_list_8 = lz78_encoding(data,1024);
+	int i_bytes = 2;
+	encoded = pack_lz78(en_list_8,i_bytes,data.size());
+	cout << "\nsize: ";
+	for (int i = 0;i < 4;i++)
+		HEX(encoded[i]);
+	cout << "\nLZW_encoded: ";
+	for (int i = 4;i < encoded.size();i++)
+		HEX(encoded[i]);
+
+	cout << "\nLZW_decoded: ";
+	decoded = lz78_decoding(encoded,i_bytes,1024);
+	for (int i = 0;i < decoded.size();i++)
+		HEX(decoded[i]);
+	
 }
 int main() {
 	cout << "\n\n";

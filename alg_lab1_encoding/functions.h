@@ -39,12 +39,23 @@ vector<uc> decoding_blocks(vector<BWTnode>& blocks);
 vector<int> suff_vector(vector <uc> data);
 vector<uc> find_last(vector <uc> data);
 
-struct LZnode {
+void packing(vector<uc>& out, int integer, int bytes);
+void unpacking(vector<uc> in, int& integer, int bytes, int& pos);
+
+struct LZ77node {
 	int offset = 0;
 	int len = 0;
 	uc next;
 };
 
-list<LZnode> lz77_encoding(vector<uc> data, int buf_size);
-vector<uc> pack_lz(list<LZnode> data, int off_bytes, int len_bytes, int size);
+list<LZ77node> lz77_encoding(vector<uc> data, int buf_size);
+vector<uc> pack_lz77(list<LZ77node> data, int off_bytes, int len_bytes, int size);
 vector<uc> lz77_decoding(vector<uc> encoded, int off_bytes, int len_bytes);
+
+struct LZ78node {
+	int index;
+};
+list<LZ78node> lz78_encoding(vector<uc> data, int max_dict);
+vector<uc> pack_lz78(list<LZ78node> data, int i_bytes, int size);
+vector<uc> lz78_decoding(vector<uc> encoded, int i_bytes, int max_dict);
+
