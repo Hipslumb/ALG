@@ -135,7 +135,7 @@ vector<BWTnode> encoding_blocks(vector<uc>& data, int b_size) {
 		for (int j = 0; j < cur_size; j++) {
 			block_data[j] = data[i + j];
 		}
-		BWTnode encoded = bwt_encoding(block_data);
+		BWTnode encoded = bwt_sufmatrix(block_data);
 		blocks.push_back({ encoded.L, encoded.I });
 	}
 
@@ -177,4 +177,28 @@ vector<uc> find_last(vector <uc> data) {
 	for (int i = 0; i < N; i++) 
 		last[i] = data[(suf_vect[i] + N - 1) % N];
 	return last;
+}
+
+//T(n) = O(n^2log n); S(n) = O(n)
+BWTnode bwt_sufmatrix(vector<uc> data) {
+	int N = data.size();
+
+	vector<uc> str = data;
+	str.push_back('$');
+	vector<int> suf_vector = suff_vector(str);
+
+	int I = -1;
+	for (int i = 0;i < suf_vector.size();i++) {
+		if (suf_vector[i] == 0) {
+			I = i;
+			break;
+		}
+	}
+	vector<uc> L(N);
+	int pos = 0;
+	for (int i = 0; i < suf_vector.size();i++) {
+		if (suf_vector[i] == 0)continue;
+		L[pos++] = data[(suf_vector[i] + N - 1) % N];
+	}
+	return{ L,I };
 }

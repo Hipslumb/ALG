@@ -17,8 +17,8 @@ vector<uc> mtf_encoding(vector<uc> data);
 vector<uc> mtf_decoding(vector<uc> encoded);
 
 map<uc, int> frequency(vector<uc> data);
-void save_file(vector<uc> encoded, map<uc, int>& freq);
-vector<uc> read_file(map<uc, int>& freq);
+void save_file(vector<uc> encoded, map<uc, uc>& lens);
+vector<uc> read_file(map<uc, uc>& lens);
 
 map<uc, double> probability(vector<uc> data);
 double arith_encoding(vector<uc> data, map<uc, double> prob);
@@ -59,3 +59,4 @@ list<LZ78node> lz78_encoding(vector<uc> data, int max_dict);
 vector<uc> pack_lz78(list<LZ78node> data, int i_bytes, int size);
 vector<uc> lz78_decoding(vector<uc> encoded, int i_bytes, int max_dict);
 
+BWTnode bwt_sufmatrix(vector<uc> data);

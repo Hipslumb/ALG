@@ -10,6 +10,7 @@
 #include <queue>
 #include <algorithm>
 #include <list>
+#include <functional>
 #define uc unsigned char
 #define mf "D:/Documents/Study/2 курс/АЛГ/encoding/"
 using namespace std;

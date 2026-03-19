@@ -53,23 +53,35 @@ void Huffman() {
 	tree Huf;
 	map<uc, int> freq = frequency(data);
 	Huf.frequency_tree(freq);
-	vector<uc> encoded = Huf.Huf_encoding(data);
+	map<uc, uc> lens = Huf.get_len();
+	map<uc, string> canon_codes = codes_builder(lens);
+	vector<uc> encoded = Huf.Huf_encoding(data, canon_codes);
 	cout << "HUFFMAN K = " << (double)data.size() / encoded.size() << "\n";
-	save_file(encoded, freq);
+
+	save_file(encoded, lens);
 
 	string path = (string)mf + "hufencoded";
 
 	printHEX(path.c_str(), 128, 1);
 	cout << "\n\n";
-	tree deHuf;
-	map<uc, int> load_f;
-	encoded = read_file(load_f);
-	deHuf.frequency_tree(load_f);
-	vector<uc> decoded = Huf.Huf_decoding(encoded);
+
+
+
+	map<uc, uc> load_lens;
+	encoded = read_file(load_lens);
+	canon_codes = codes_builder(load_lens);
+
+	vector<uc> decoded = Huf_decoding(encoded,canon_codes);
 	for (int i = 0;i < 128;i++)
 		HEX(decoded[i]);
 	cout << "\n\n";
 
+	if (data.size() == decoded.size()) {
+		cout << "SAME SIZE\n";
+	}
+	else {
+		cout << "WRONG SIZE\n";
+	}
 }
 
 void Arithmetic() {
@@ -138,16 +150,18 @@ void LZ() {
 		HEX(decoded[i]);
 	
 }
+
 int main() {
+	//setlocale(LC_ALL, "RU");
 	cout << "\n\n";
 	//create_raw();
 	//RLE();
 	//func_H();
 	//MTF();
-	//Huffman();
+	Huffman();
 	//Arithmetic();
 	//BWT();
-	LZ();
+	//LZ();
 	cout << "\n\n";
 	return 0;
 }
