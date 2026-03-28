@@ -17,8 +17,8 @@ vector<uc> mtf_encoding(vector<uc> data);
 vector<uc> mtf_decoding(vector<uc> encoded);
 
 map<uc, int> frequency(vector<uc> data);
-void save_file(vector<uc> encoded, map<uc, uc>& lens);
-vector<uc> read_file(map<uc, uc>& lens);
+void save_file(string filename, vector<uc> encoded, map<uc, uc>& lens);
+vector<uc> read_file(string filename, map<uc, uc>& lens);
 
 map<uc, double> probability(vector<uc> data);
 double arith_encoding(vector<uc> data, map<uc, double> prob);
@@ -60,3 +60,45 @@ vector<uc> pack_lz78(list<LZ78node> data, int i_bytes, int size);
 vector<uc> lz78_decoding(vector<uc> encoded, int i_bytes, int max_dict);
 
 BWTnode bwt_sufmatrix(vector<uc> data);
+
+void save_data(vector<uc> data, string file);
+void compare(const char* name, const char* enname);
+
+void BWT_MTF(vector<uc> data, vector<int>& block_sizes,ofstream& out);
+void entropy_dependence();
+
+void LZSS_compress(vector<uc>& data, vector<int>& buf_sizes, ofstream& out);
+void LZSS_dependence();
+
+void LZW_compress(vector<uc>& data, vector<int>& max_dict, ofstream& out);
+void LZW_dependence();
+
+void HA_compress(string filename, int& orig_size, string out);
+vector<uc> HA_decompress(string filename);
+
+void RLE_compress(string filename, int& orig_size, string out);
+vector<uc> RLE_decompress(string filename);
+
+void BWT_RLE_compress(string filename, int& orig_size, string out);
+vector<uc> BWT_RLE_decompress(string filename);
+
+void BWT_MTF_HA_compress(string filename, int& orig_size, string out);
+vector<uc> BWT_MTF_HA_decompress(string filename);
+
+void BWT_MTF_RLE_HA_compress(string filename, int& orig_size, string out);
+vector<uc> BWT_MTF_RLE_HA_decompress(string filename);
+
+void LZSS_compress(string filename, int& orig_size, string out);
+vector<uc> LZSS_decompress(string filename);
+
+void LZSS_HA_compress(string filename, int& orig_size, string out);
+vector<uc> LZSS_HA_decompress(string filename);
+
+void LZSS_HA_compress(string filename, int& orig_size, string out);
+vector<uc> LZSS_HA_decompress(string filename);
+
+void LZW_compress(string filename, int& orig_size, string out);
+vector<uc> LZW_decompress(string filename);
+
+void LZW_HA_compress(string filename, int& orig_size, string out);
+vector<uc> LZW_HA_decompress(string filename);

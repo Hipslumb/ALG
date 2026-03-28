@@ -11,6 +11,6 @@
 #include <algorithm>
 #include <list>
 #include <functional>
+#include <ctime>
 #define uc unsigned char
-#define mf "D:/Documents/Study/2 курс/АЛГ/encoding/"
 using namespace std;

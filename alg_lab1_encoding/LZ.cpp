@@ -13,7 +13,8 @@ list<LZ77node> lz77_encoding(vector<uc> data, int buf_size) {
 			buffer.push_back(data[j + k]);
 		}
 		LZ77node cur;
-		for (int j = dict.size() - 1;j >= 0;j--) {
+		int search_start = max(0, (int)dict.size() - buf_size);
+		for (int j = dict.size() - 1;j >= search_start;j--) {
 			int len = 0;
 			while (j + len < dict.size() &&
 				len < buffer.size() && dict[j + len] == buffer[len])

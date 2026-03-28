@@ -15,6 +15,17 @@ vector<uc> rle_encoding(vector<uc> data, int Ms, int Mc) {
 	int max_count = (1 << (Mc - 1)) - 1;
 
 	while (i < size) {
+		int remaining = size - i;
+		if (remaining < Ms_byte) {
+			int k = 1;
+			int flag = k | (1 << (Mc - 1));
+			for (int b = Mc_byte - 1; b >= 0; b--)
+				encoded.push_back((flag >> (8 * b)) & 0xFF);
+			for (int j = 0; j < remaining; j++) {
+				encoded.push_back(data[i + j]);
+			}
+			break;
+		}
 		int k = 1;
 		if (i + Ms_byte < size && same_symbol(data.data(), i, i + Ms_byte, Ms_byte)) {
 
@@ -56,28 +67,54 @@ vector<uc> rle_decoding(vector<uc> encoded, int Ms, int Mc) {
 
 	int i = 0, pos = 0; int size = encoded.size();
 	while (i < size) {
+		if (i + Mc_byte > size) break;
 		int k = 0;
-        for (int b = 0; b < Mc_byte; b++) {
-            k = (k << 8) | encoded[i + b];
-        }
+		for (int b = 0; b < Mc_byte; b++) {
+			k = (k << 8) | encoded[i + b];
+		}
 		i += Mc_byte;
 
 		int flag = 1 & (k >> (Mc - 1));
 		if (flag == 0) {//repeat
-			
+			if (i + Ms_byte > size) break;
 			for (int j = 0; j < k; j++) {
 				for (int b = 0; b < Ms_byte; b++)
 					decoded.push_back(encoded[i + b]);
 			}
 			i += Ms_byte;
 		}
-		else {
-			int len = (k & ((1 << (Mc - 1)) - 1));
-			for (int j = 0; j < len; j++) {
-				for (int b = 0; b < Ms_byte; b++)
-					decoded.push_back(encoded[i + b + j * Ms_byte]);
+
+		else { // unique
+			int len = k & ((1 << (Mc - 1)) - 1);
+			int data_size = Ms_byte * len;
+
+			if (i + data_size > size) {
+
+				int bytes_available = size - i;
+				int full_blocks = bytes_available / Ms_byte;
+
+				for (int j = 0; j < full_blocks; j++) {
+					for (int b = 0; b < Ms_byte; b++) {
+						decoded.push_back(encoded[i + b + j * Ms_byte]);
+					}
+				}
+				i += Ms_byte * full_blocks;
+
+				int remaining = bytes_available % Ms_byte;
+				for (int b = 0; b < remaining; b++) {
+					decoded.push_back(encoded[i + b]);
+				}
+				i += remaining;
+				break;
 			}
-			i += Ms_byte * len;
+			else {
+				for (int j = 0; j < len; j++) {
+					for (int b = 0; b < Ms_byte; b++) {
+						decoded.push_back(encoded[i + b + j * Ms_byte]);
+					}
+				}
+				i += data_size;
+			}
 		}
 	}
 	return decoded;

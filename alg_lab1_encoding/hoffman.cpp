@@ -109,8 +109,8 @@ vector<uc> Huf_decoding(vector<uc> encoded, map<uc, string>& canon) {
 	return decoded;
 }
 
-void save_file(vector<uc> encoded, map<uc, uc>& lens) {
-	ofstream file((string)mf + "hufencoded", ios::binary);
+void save_file(string filename,vector<uc> encoded, map<uc, uc>& lens) {
+	ofstream file(filename, ios::binary);
 	int size = lens.size();
 	file.write((char*)&size, sizeof(size));
 	for (auto& p : lens) {
@@ -124,8 +124,8 @@ void save_file(vector<uc> encoded, map<uc, uc>& lens) {
 	file.close();
 }
 
-vector<uc> read_file(map<uc, uc>& lens) {
-	ifstream file((string)mf + "hufencoded", ios::binary);
+vector<uc> read_file(string filename, map<uc, uc>& lens) {
+	ifstream file(filename, ios::binary);
 	vector<uc> encoded;
 
 	int size;

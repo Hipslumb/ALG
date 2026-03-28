@@ -21,36 +21,3 @@ double entropy(vector<uc> text, int bytes) {
 
 	return H;
 }
-
-void func_H() {
-	ifstream in((string)mf + "Alice.txt", ios::binary);
-	ofstream out((string)mf + "english.txt", ios::binary);
-
-	char cur;
-	while (in.get(cur)) {
-		if ((uc)cur < 128) {
-			out.put(cur);
-		}
-	}
-
-	in.close(); out.close();
-	const int max = 1024 * 1024;
-
-	ifstream file((string)mf + "english.txt", ios::binary | ios::ate);
-	
-	int size = file.tellg();
-
-	file.seekg(0, ios::beg);
-	vector<uc> text(size);
-	file.read(reinterpret_cast<char*>(text.data()), size);
-	file.close();
-
-	ofstream f((string)mf + "entropy", ios::binary);
-
-	for (int n = 1; n < 128; n++) {
-		double H = entropy(text, n);
-		f << n << " " << H << "\n";
-	}
-
-	f.close();
-}

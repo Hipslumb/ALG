@@ -46,17 +46,4 @@ inline void Image::save(const char* name) {
 	file.write((char*)data, width * height * pixel);
 	file.close();
 }
-
-inline void Image::compare(const char* name,const char* rawname) {
-	ifstream orig(name, ios::binary | ios::ate);
-	ifstream raw(rawname, ios::binary| ios::ate);
-
-	int orig_size = orig.tellg();
-	int raw_size = raw.tellg();
-
-	orig.close(); raw.close();
-
-	cout << "PNG/RAW: k = " << double(orig_size) / (raw_size) << "\n";
-
-	data_size = raw_size - 10;
-}
+void create_raw();
