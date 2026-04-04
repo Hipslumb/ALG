@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
+#include <algorithm>
 using namespace std;
 #define uc unsigned char
 

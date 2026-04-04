@@ -3,16 +3,41 @@
 bool Image::load(string filename) {
 	const char* name = filename.c_str();
 	data = stbi_load(name, &width, &height, &pixel, 0);
+	ifstream file(filename, ios::binary);
+
 	if (data == nullptr) return false;
+	data_size = width * height * pixel;
+
+	if (file.is_open()) {
+		int w, h;
+		uc p, t, cs;
+		file.read((char*)&w, 4);
+		file.read((char*)&h, 4);
+		file.read((char*)&p, 1);
+		file.read((char*)&t, 1);
+		file.read((char*)&cs, 1);
+
+		if (w == width && h == height && p == pixel) {
+			type = t;
+			color_space = cs;
+			file.close();
+			return true;
+		}
+		file.close();
+	}
+	color_space = 0;
 	if (pixel == 1) {
 		type = 0;
-		for (int i = 0;i < width * height;i++)
+		for (int i = 0; i < width * height; i++) {
 			if (data[i] != 0 && data[i] != 255) {
 				type = 1;
 				break;
 			}
+		}
 	}
-	else type = 3;
+	else {
+		type = 3;
+	}
 
 	return true;
 }
@@ -25,6 +50,8 @@ void Image::save(string filename) {
 	file.write((char*)&height, 4);
 	file.write((char*)&pixel, 1);
 	file.write((char*)&type, 1);
+	file.write((char*)&color_space, 1);
+
 	file.write((char*)data, width * height * pixel);
 	file.close();
 }
