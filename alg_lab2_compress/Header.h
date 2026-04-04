@@ -1,0 +1,14 @@
+#pragma once
+
+#include "C:\Users\Admin\source\repos\stb_image.h"
+#include "C:\Users\Admin\source\repos\stb_image_write.h"
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <ctime>
+using namespace std;
+#define uc unsigned char
+

@@ -11,7 +11,9 @@ void HA_compress(string filename, int& orig_size, string out) {
 	vector<uc> encoded = Huf.Huf_encoding(data, canon_codes);
 
 	save_file(out,encoded, lens);
+	
 	cout << "HA compress K = " << double(data.size()) / encoded.size();
+	cout << "\nH = " << entropy(encoded, 1);
 }
 
 vector<uc> HA_decompress(string filename) {
@@ -280,7 +282,7 @@ vector<uc> LZSS_HA_decompress(string filename) {
 void LZW_compress(string filename, int& orig_size, string out) {
 	vector<uc> data = load_data(filename);
 	orig_size = data.size();
-	int max_dict = 1024;
+	int max_dict = 65536;
 	list<LZ78node> list = lz78_encoding(data, max_dict);
 	int i_bytes = 2;
 
