@@ -12,9 +12,13 @@ int main() {
 	clock_t start = clock();
 
 	Image img; img.load("testdata/RGB.png");
-	img.to_YCbCr();
+	/*img.to_YCbCr();
 	img.saveComponents("test/MY");
-	stbi_write_png("test/myYCbCr.png", img.width, img.height, 3, img.data, 0);
+	stbi_write_png("test/myYCbCr.png", img.width, img.height, 3, img.data, 0);*/
+
+	cout << "Original size: " << img.data_size;
+	testPixelationArtifacts("testdata/RGB.png");
+	cout << "\nNew size: " << img.data_size;
 
 	clock_t end = clock();
 	double time_taken = double(end - start) / CLOCKS_PER_SEC;

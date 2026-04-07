@@ -93,23 +93,23 @@ void Image::toBW_byDithering() {
 		buffer[i] = data[i];
 
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			float oldPixel = buffer[y * width + x];
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			float oldPixel = buffer[i * width + j];
 			float newPixel = (oldPixel < 128) ? 0 : 255;
-			buffer[y * width + x] = newPixel;
+			buffer[i * width + j] = newPixel;
 
 			float error = oldPixel - newPixel;
 
-			if (x + 1 < width)
-				buffer[y * width + x + 1] += error * 7 / 16;
-			if (y + 1 < height) {
-				if (x - 1 >= 0)
-					buffer[(y + 1) * width + x - 1] += error * 3 / 16;
-				buffer[(y + 1) * width + x] += error * 5 / 16;
+			if (j + 1 < width)
+				buffer[i * width + j + 1] += error * 7 / 16;
+			if (i + 1 < height) {
+				if (j - 1 >= 0)
+					buffer[(i + 1) * width + j - 1] += error * 3 / 16;
+				buffer[(i + 1) * width + j] += error * 5 / 16;
 
-				if (x + 1 < width)
-					buffer[(y + 1) * width + x + 1] += error * 1 / 16;
+				if (j + 1 < width)
+					buffer[(i + 1) * width + j + 1] += error * 1 / 16;
 			}
 		}
 	}

@@ -126,6 +126,7 @@
     <ClCompile Include="createimage.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="seplings.cpp" />
     <ClCompile Include="YCbCr.cpp" />
   </ItemGroup>
   <ItemGroup>

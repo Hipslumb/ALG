@@ -21,10 +21,14 @@ public:
 
 	bool load(string filename);
 	void save(string filename);
+	void savePNG(string outfile);
 	void toGrayscale();
 	void toBW_byrounding();
 	void toBW_byDithering();
 	void to_YCbCr();
 	void to_RGB();
 	void saveComponents(string prefix);
+	void downsampling(int k);
+	void upsampling(int k);
+	void resizing();
 };

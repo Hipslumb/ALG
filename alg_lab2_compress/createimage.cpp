@@ -16,8 +16,7 @@ void createImages(string filename, string outpath) {
     grayImg.save(outpath + "grey.raw");
     
     string outfile = outpath + "grey.png";
-    const char* name = outfile.c_str();
-    stbi_write_png(name, grayImg.width, grayImg.height, 1, grayImg.data, 0);
+    grayImg.savePNG(outfile);
     cout << "+ grey.png\n";
 
     Image bwRoundImg; bwRoundImg.load(filename);
@@ -25,8 +24,7 @@ void createImages(string filename, string outpath) {
     bwRoundImg.save(outpath + "bw_round.raw");
 
     outfile = outpath + "bw_round.png";
-    name = outfile.c_str();
-    stbi_write_png(name, bwRoundImg.width, bwRoundImg.height, 1, bwRoundImg.data, 0);
+    bwRoundImg.savePNG(outfile);
     cout << "+ bw_round.png\n";
 
     Image bwDitherImg; bwDitherImg.load(filename);
@@ -34,8 +32,12 @@ void createImages(string filename, string outpath) {
     bwDitherImg.save(outpath + "bw_dither.raw");
 
     outfile = outpath + "bw_dither.png";
-    name = outfile.c_str();
-    stbi_write_png(name, bwDitherImg.width, bwDitherImg.height, 1, bwDitherImg.data, 0);
+    bwDitherImg.savePNG(outfile);
     cout << "+ bw_dither.png\n";
 
+}
+
+void Image::savePNG(string outfile) {
+    const char* name = outfile.c_str();
+    stbi_write_png(name, width, height, pixel, data, 0);
 }

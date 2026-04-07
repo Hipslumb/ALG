@@ -7,8 +7,6 @@
 void Image::to_YCbCr() {
     if (!data || pixel != 3) return;
 
-    cout << "Converting RGB to YCbCr..." << endl;
-
     int size = width * height;
     uc* ycbcr = new uc[size * 3];
 
@@ -18,7 +16,7 @@ void Image::to_YCbCr() {
         float b = data[i * 3 + 2];
 
         float Y = 0.299 * r + 0.587 * g + 0.114 * b;
-        float Cb = -0.1687 * r - 0.3313 * g + 0.5 * b + 128;
+        float Cb = - 0.1687 * r - 0.3313 * g + 0.5 * b + 128;
         float Cr = 0.5 * r - 0.4187 * g - 0.0813 * b + 128;
 
         ycbcr[i * 3] = (uc)min(255.0f, max(0.0f, Y));
