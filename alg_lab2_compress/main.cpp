@@ -10,6 +10,7 @@ void HEX(uc a) {
 int main() {
 	cout << "\n\n";
 	clock_t start = clock();
+	//createImages("testdata/RGB.png", "testdata/MY");
 
 	Image img; img.load("testdata/RGB.png");
 	/*img.to_YCbCr();
@@ -17,7 +18,8 @@ int main() {
 	stbi_write_png("test/myYCbCr.png", img.width, img.height, 3, img.data, 0);*/
 
 	cout << "Original size: " << img.data_size;
-	testPixelationArtifacts("testdata/RGB.png");
+	//testPixelationArtifacts("testdata/RGB.png");
+
 	cout << "\nNew size: " << img.data_size;
 
 	clock_t end = clock();

@@ -30,5 +30,7 @@ public:
 	void saveComponents(string prefix);
 	void downsampling(int k);
 	void upsampling(int k);
-	void resizing();
+
+	vector<vector<vector<float>>> splitBlocks();
+	vector<uc> mergeBlocks(vector<vector<vector<float>>> blocks);
 };

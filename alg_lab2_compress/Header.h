@@ -10,6 +10,9 @@
 #include <string>
 #include <ctime>
 #include <algorithm>
+#include <cmath>
+const int N = 8, M = 8;
+
 using namespace std;
 #define uc unsigned char
 

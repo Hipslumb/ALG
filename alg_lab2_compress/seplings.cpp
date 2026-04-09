@@ -59,12 +59,11 @@ void testPixelationArtifacts(string filename) {
 	for (int k : koef) {
 		Image copy;
 		copy.load(filename);
-		i++;
 		copy.downsampling(k);
 		//copy.savePNG("koef/" + to_string(i) + "downsampled_" + to_string(k) + ".png");
 
 		copy.upsampling(k);
-		copy.savePNG("koef/" + to_string(i) + "upsampled_" + to_string(k) + ".png");
+		copy.savePNG("koef/upsampled_" + to_string(k) + ".png");
 
 	}
 }
@@ -108,7 +107,4 @@ float bilinearInterpolation(
 	float result = linearInterpolation(y1, z_top, y2, z_bottom, y);
 
 	return result;
-}
-void Image::resizing() {
-
 }

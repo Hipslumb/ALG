@@ -9,7 +9,9 @@ alg_lab2/alg_lab2.vcxproj.filters
 alg_lab1_encoding/alg_lab1_encoding.vcxproj.user
 alg_lab1_encoding/alg_lab1_encoding.vcxproj
 alg_lab1_encoding/alg_lab1_encoding.vcxproj.filters
-alg_lab1_encoding/alg_lab2_compress.vcxproj.user
-alg_lab1_encoding/alg_lab2_compress.vcxproj
-alg_lab1_encoding/alg_lab2_compress.vcxproj.filters
+alg_lab2_compress/alg_lab2_compress.vcxproj.user
+alg_lab2_compress/alg_lab2_compress.vcxproj
+alg_lab2_compress/alg_lab2_compress.vcxproj.filters
+alg_lab2_compress/test
+alg_lab2_compress/koef
 /

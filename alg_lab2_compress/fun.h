@@ -10,3 +10,6 @@ float bilinearInterpolation(
 	float x, float y);
 
 float linearSpline(const vector<float>& x, const vector<float>& y, float x_val);
+
+void FDCT(const double s[N][M], double S[N][M]);
+void IDCT(const double S[N][M], double s[N][M]);
