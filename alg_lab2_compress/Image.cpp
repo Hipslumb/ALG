@@ -38,7 +38,7 @@ bool Image::load(string filename) {
 	else {
 		type = 3;
 	}
-
+	file.close();
 	return true;
 }
 

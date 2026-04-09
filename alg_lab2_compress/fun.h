@@ -11,5 +11,11 @@ float bilinearInterpolation(
 
 float linearSpline(const vector<float>& x, const vector<float>& y, float x_val);
 
-void FDCT(const double s[N][M], double S[N][M]);
-void IDCT(const double S[N][M], double s[N][M]);
+void FDCT(const vector<vector<double>>& s, vector<vector<double>>& S);
+void IDCT(const vector<vector<double>>& S, vector<vector<double>>& s);
+
+vector<vector<double>> DCTMatrix(int N);
+vector<vector<double>> matrixMultiply(const vector<vector<double>>& A,
+	const vector<vector<double>>& B);
+vector<vector<double>> matrixTranspose(const vector<vector<double>>& A);
+vector<vector<double>> DCT_bymatrix(const vector<vector<double>>& f, bool is_F);

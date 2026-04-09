@@ -31,6 +31,8 @@ public:
 	void downsampling(int k);
 	void upsampling(int k);
 
-	vector<vector<vector<float>>> splitBlocks();
-	vector<uc> mergeBlocks(vector<vector<vector<float>>> blocks);
+	vector<vector<vector<double>>> splitBlocks();
+	vector<uc> mergeBlocks(vector<vector<vector<double>>> blocks);
+
+	void useDCT(bool is_F);
 };
