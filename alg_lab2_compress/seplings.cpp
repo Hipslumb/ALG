@@ -95,9 +95,8 @@ float linearSpline(const vector<float>& x, const vector<float>& y, float x_val) 
 }
 
 float bilinearInterpolation(
-	float x1, float y1, float z11, float y2, float z12,
-	float x2, float z21, float z22,
-	float x, float y) {
+	float x1, float y1, float x2, float y2,
+	float z11, float z12, float z21, float z22, float x, float y) {
 	if (x < x1 || x > x2 || y < y1 || y > y2) {
 		return 0;
 	}
@@ -107,4 +106,59 @@ float bilinearInterpolation(
 	float result = linearInterpolation(y1, z_top, y2, z_bottom, y);
 
 	return result;
+}
+
+vector<vector<float>> upsampleBlock(const vector<vector<float>>& small, int newH, int newW) {
+	int oldH = small.size();
+	int oldW = small[0].size();
+
+	vector<vector<float>> big(newH, vector<float>(newW));
+
+	for (int y = 0; y < newH; y++) {
+		for (int x = 0; x < newW; x++) {
+			float Y = (float)y * (oldH - 1) / (newH - 1);
+			float X = (float)x * (oldW - 1) / (newW - 1);
+
+			int y1 = (int)Y;
+			int x1 = (int)X;
+			int y2 = min(y1 + 1, oldH - 1);
+			int x2 = min(x1 + 1, oldW - 1);
+
+			float z11 = small[y1][x1];
+			float z12 = small[y2][x1];
+			float z21 = small[y1][x2];
+			float z22 = small[y2][x2];
+
+			float val = bilinearInterpolation(x1, y1, x2, y2, z11, z12, z21, z22, X, Y);
+
+			big[y][x] = val;
+		}
+	}
+
+	return big;
+}
+
+void Image::resize(int new_width, int new_height) {
+	if (!data) return;
+
+	vector<vector<float>> oldImage(height, vector<float>(width));
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			oldImage[y][x] = data[y * width + x];
+		}
+	}
+
+	vector<vector<float>> newImage = upsampleBlock(oldImage, new_height, new_width);
+
+	stbi_image_free(data);
+	data = new uc[new_width * new_height];
+	for (int y = 0; y < new_height; y++) {
+		for (int x = 0; x < new_width; x++) {
+			data[y * new_width + x] = (uc)min(255.0f, max(0.0f, newImage[y][x]));
+		}
+	}
+
+	width = new_width;
+	height = new_height;
+	data_size = new_width * new_height;
 }

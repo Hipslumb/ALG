@@ -30,6 +30,7 @@ public:
 	void saveComponents(string prefix);
 	void downsampling(int k);
 	void upsampling(int k);
+	void resize(int new_width, int new_height);
 
 	vector<vector<vector<double>>> splitBlocks();
 	vector<uc> mergeBlocks(vector<vector<vector<double>>> blocks);

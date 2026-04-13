@@ -127,7 +127,6 @@ void Image::useDCT(bool is_F) {
         else  IDCT(block, dctBlock);
         block = dctBlock;*/
         block = DCT_bymatrix(block, is_F);
-        
     }
     vector<uc> newImage = mergeBlocks(blocks);
 
