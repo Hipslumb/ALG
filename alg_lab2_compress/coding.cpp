@@ -180,3 +180,115 @@ vector<int> vlc_decoding(const vector<DC>& vlcData) {
 
     return result;
 }
+
+/////////HUFFMAN///////////////////////////////////////////
+vector<uc> Huf_encoding(const vector<int>& keys, map<int, string>& huf_table) {
+    vector<uc> encoded;
+    string bits;
+
+    for (int key : keys) {
+        bits += huf_table[key];
+    }
+
+    encoded = packBits(bits);
+    return encoded;
+}
+
+vector<int> Huf_decoding(const vector<uc>& encoded, map<string, int>& huf_table) {
+    vector<int> decoded;
+
+    if (encoded.empty()) return decoded;
+
+    int last_size = encoded[0];
+
+    string bits;
+    for (int i = 1; i < (int)encoded.size(); i++) {
+        uc b = encoded[i];
+        for (int j = 7; j >= 0; j--) {
+            bits += ((b >> j) & 1) ? '1' : '0';
+        }
+    }
+
+    if (last_size < 8) {
+        bits = bits.substr(0, bits.size() - (8 - last_size));
+    }
+
+    string cur;
+    for (char bit : bits) {
+        cur += bit;
+        auto it = huf_table.find(cur);
+        if (it != huf_table.end()) {
+            decoded.push_back(it->second);
+            cur = "";
+        }
+    }
+
+    return decoded;
+}
+//////////////for huffman//////////////////////
+
+vector<uc> packBits(const string& bits) {
+    vector<uc> encoded;
+
+    if (bits.empty()) {
+        encoded.push_back(0);
+        return encoded;
+    }
+
+    int last_size = bits.size() % 8;
+    if (last_size == 0) last_size = 8;
+    encoded.push_back((uc)last_size);
+
+    for (int i = 0; i < (int)bits.size(); i += 8) {
+        uc byte = 0;
+        for (int j = 0; j < 8 && i + j < (int)bits.size(); j++) {
+            if (bits[i + j] == '1') {
+                byte |= (1 << (7 - j));
+            }
+        }
+        encoded.push_back(byte);
+    }
+
+    return encoded;
+}
+
+vector<uc> encodeDC_full(const vector<DC>& dcVLC, map<int, string>& hufTable) {
+    string bits;
+
+    for (const auto& vlc : dcVLC) {
+        int size = vlc.size;
+        int code = vlc.code;
+
+        bits += hufTable[size];
+
+        for (int i = size - 1; i >= 0; i--) {
+            bits += ((code >> i) & 1) ? '1' : '0';
+        }
+    }
+    return packBits(bits);
+}
+
+vector<uc> encodeAC_full(const vector<AC>& acVLC, map<int, string>& hufTable) {
+    string bits;
+
+    for (const auto& vlc : acVLC) {
+        //(0,0,0)
+        if (vlc.run == 0 && vlc.size == 0 && vlc.code == 0) {
+            bits += hufTable[0x00];
+            continue;
+        }
+        //(15,0,0)
+        if (vlc.run == 15 && vlc.size == 0 && vlc.code == 0) {
+            bits += hufTable[0xF0];
+            continue;
+        }
+        int key = (vlc.run << 4) | vlc.size;
+        bits += hufTable[key];
+
+        for (int i = vlc.size - 1; i >= 0; i--) {
+            bits += ((vlc.code >> i) & 1) ? '1' : '0';
+        }
+    }
+
+    return packBits(bits);
+}
