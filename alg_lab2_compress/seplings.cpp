@@ -1,55 +1,40 @@
 
 #include "fun.h"
 
-void Image::downsampling(int k) {
-	if (width % k != 0 || height % k != 0 || !data) return;
+vector<uc> downsampling(const vector<uc>& channel, int w, int h, int k) {
+	int new_w = w / k;
+	int new_h = h / k;
+	vector<uc> result(new_w * new_h);
 
-	int new_width = width / k;
-	int new_height = height / k;
-	int new_size = new_width * new_height;
-
-	uc* new_data = new uc[new_size * pixel];
-
-	for (int i = 0; i < new_height; i++) {
-		for (int j = 0; j < new_width; j++) {
-			int x = j * k;
-			int y = i * k;
-
-			for (int c = 0; c < pixel; c++)
-				new_data[(i * new_width + j) * pixel + c]
-				= data[(y * width + x) * pixel + c];
+	for (int i = 0; i < new_h; i++) {
+		for (int j = 0; j < new_w; j++) {
+			int sum = 0;
+			for (int dy = 0; dy < k; dy++) {
+				for (int dx = 0; dx < k; dx++) {
+					int x = j * k + dx;
+					int y = i * k + dy;
+					sum += channel[y * w + x];
+				}
+			}
+			result[i * new_w + j] = sum / (k * k);
 		}
 	}
-	stbi_image_free(data);
-	data = new_data;
-	width = new_width;
-	height = new_height;
-	data_size = new_size * pixel;
+	return result;
 }
 
-void Image::upsampling(int k) {
+vector<uc> upsampling(const vector<uc>& channel, int w, int h, int k) {
+	int new_w = w * k;
+	int new_h = h * k;
+	vector<uc> result(new_w * new_h);
 
-	int new_width = width * k;
-	int new_height = height * k;
-	int new_size = new_width * new_height;
-
-	uc* new_data = new uc[new_size * pixel];
-
-	for (int i = 0; i < new_height; i++) {
-		for (int j = 0; j < new_width; j++) {
-			int x = j / k;
-			int y = i / k;
-
-			for (int c = 0; c < pixel; c++)
-				new_data[(i * new_width + j) * pixel + c]
-				= data[(y * width + x) * pixel + c];
+	for (int i = 0; i < new_h; i++) {
+		for (int j = 0; j < new_w; j++) {
+			int srcX = j / k;
+			int srcY = i / k;
+			result[i * new_w + j] = channel[srcY * w + srcX];
 		}
 	}
-	stbi_image_free(data);
-	data = new_data;
-	width = new_width;
-	height = new_height;
-	data_size = new_size * pixel;
+	return result;
 }
 
 void testPixelationArtifacts(string filename) {
@@ -60,8 +45,7 @@ void testPixelationArtifacts(string filename) {
 		Image copy;
 		copy.load(filename);
 		copy.downsampling(k);
-		//copy.savePNG("koef/" + to_string(i) + "downsampled_" + to_string(k) + ".png");
-
+		
 		copy.upsampling(k);
 		copy.savePNG("koef/upsampled_" + to_string(k) + ".png");
 
@@ -78,6 +62,7 @@ float linearInterpolation(float x1, float y1, float x2, float y2, float x) {
 	float t = (x - x1) / (x2 - x1);
 	return y1 + t * (y2 - y1);
 }
+
 float linearSpline(const vector<float>& x, const vector<float>& y, float x_val) {
 	if (x_val <= x[0]) {
 		return linearInterpolation(x[0], y[0], x[1], y[1], x_val);
@@ -138,27 +123,21 @@ vector<vector<float>> upsampleBlock(const vector<vector<float>>& small, int newH
 	return big;
 }
 
-void Image::resize(int new_width, int new_height) {
-	if (!data) return;
-
-	vector<vector<float>> oldImage(height, vector<float>(width));
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			oldImage[y][x] = data[y * width + x];
+vector<uc> resize(const vector<uc>& channel, int oldW, int oldH, int newW, int newH) {
+	vector<vector<float>> oldImage(oldH, vector<float>(oldW));
+	for (int y = 0; y < oldH; y++) {
+		for (int x = 0; x < oldW; x++) {
+			oldImage[y][x] = channel[y * oldW + x];
 		}
 	}
 
-	vector<vector<float>> newImage = upsampleBlock(oldImage, new_height, new_width);
+	vector<vector<float>> newImage = upsampleBlock(oldImage, newH, newW);
 
-	stbi_image_free(data);
-	data = new uc[new_width * new_height];
-	for (int y = 0; y < new_height; y++) {
-		for (int x = 0; x < new_width; x++) {
-			data[y * new_width + x] = (uc)min(255.0f, max(0.0f, newImage[y][x]));
+	vector<uc> result(newW * newH);
+	for (int y = 0; y < newH; y++) {
+		for (int x = 0; x < newW; x++) {
+			result[y * newW + x] = (uc)min(255.0f, max(0.0f, newImage[y][x]));
 		}
 	}
-
-	width = new_width;
-	height = new_height;
-	data_size = new_width * new_height;
+	return result;
 }

@@ -1,64 +1,50 @@
 #include "fun.h"
 
-vector<vector<vector<double>>> Image::splitBlocks() {
+vector<vector<vector<double>>> split_blocks(const vector<uc>& channel, int w, int h, int N, int M) {
     vector<vector<vector<double>>> blocks;
 
-    int blocksH = height / N;
-    int blocksW = width / M;
-
-    if (width % M != 0 || height % N != 0) {
-        cout << "!!!!!Image size " << width << "x" << height
-            << " not multiple of block size " << N << "x" << M << "\n";
-    }
+    int blocksW = w / M;
+    int blocksH = h / N;
 
     for (int bi = 0; bi < blocksH; bi++) {
         for (int bj = 0; bj < blocksW; bj++) {
-            vector<vector<double>> block(N, vector<double>(M * pixel, 0.0f));
+            vector<vector<double>> block(N, vector<double>(M));
 
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
-                    for (int c = 0; c < pixel; c++) {
-                        int pj = bj * M + j;
-                        int pi = bi * N + i;
-                        int idx = (pi * width + pj) * pixel + c;
-                        block[i][j * pixel + c] = (float)data[idx] - 128;
-                    }
+                    int px = bj * M + j;
+                    int py = bi * N + i;
+                    block[i][j] = (double)channel[py * w + px] - 128.0;
                 }
             }
-
             blocks.push_back(block);
         }
     }
     return blocks;
 }
 
-vector<uc> Image::mergeBlocks(vector<vector<vector<double>>> blocks) {
-    int blocksH = height / N;
-    int blocksW = width / M;
+vector<uc> merge_blocks(const vector<vector<vector<double>>>& blocks, int w, int h, int N, int M) {
+    int blocksW = w / M;
+    int blocksH = h / N;
 
-    vector<uc> image(width * height * pixel, 0);
+    vector<uc> channel(w * h);
 
     for (int bi = 0; bi < blocksH; bi++) {
         for (int bj = 0; bj < blocksW; bj++) {
-            int blockIdx = bi * blocksW + bj;
-            const auto& block = blocks[blockIdx];
+            int idx = bi * blocksW + bj;
+            vector<vector<double>> block = blocks[idx];
 
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
-                    for (int c = 0; c < pixel; c++) {
-                        int pj = bj * M + j;
-                        int pi = bi * N + i;
-                        int idx = (pi * width + pj) * pixel + c;
-
-                        float val = block[i][j * pixel + c] + 128;
-                        image[idx] = (uc)min(255.0f, max(0.0f, val));
-                    }
+                    int px = bj * M + j;
+                    int py = bi * N + i;
+                    double val = block[i][j] + 128.0;
+                    channel[py * w + px] = (uc)min(255.0, max(0.0, val));
                 }
             }
         }
     }
-
-    return image;
+    return channel;
 }
 
 double C(int k) {
@@ -118,25 +104,20 @@ void IDCT(const vector<vector<double>>& S, vector<vector<double>>& s) {
     }
 }
 
-void Image::useDCT(bool is_F) {
-    auto blocks = splitBlocks();
+vector<uc> useDCT(const vector<uc>& channel, int w, int h, int N, int M, bool is_F) {
+    vector<vector<vector<double>>> blocks = split_blocks(channel, w, h, N, M);
 
     for (auto& block : blocks) {
-        vector<vector<double>> dctBlock;
+
         /*if (is_F) FDCT(block, dctBlock);
         else  IDCT(block, dctBlock);
         block = dctBlock;*/
+
         block = DCT_bymatrix(block, is_F);
     }
-    vector<uc> newImage = mergeBlocks(blocks);
 
-    stbi_image_free(data);
-    data = new uc[newImage.size()];
-    memcpy(data, newImage.data(), newImage.size());
-    data_size = newImage.size();
-    type = (pixel == 1) ? 1 : 2;
+    return merge_blocks(blocks, w, h, N, M);
 }
-
 //MATRIX
 
 vector<vector<double>> DCTMatrix(int N) {

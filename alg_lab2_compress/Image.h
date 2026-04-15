@@ -21,19 +21,20 @@ public:
 
 	bool load(string filename);
 	void save(string filename);
+
+	bool loadDATA(const string& filename, vector<uc>& Y_compressed,
+		vector<uc>& Cb_compressed, vector<uc>& Cr_compressed, int& quality);
+	void saveDATA(string filename, const vector<uc>& Y_compressed,
+		const vector<uc>& Cb_compressed, const vector<uc>& Cr_compressed, int quality);
 	void savePNG(string outfile);
+	
 	void toGrayscale();
 	void toBW_byrounding();
 	void toBW_byDithering();
 	void to_YCbCr();
 	void to_RGB();
 	void saveComponents(string prefix);
-	void downsampling(int k);
-	void upsampling(int k);
-	void resize(int new_width, int new_height);
 
-	vector<vector<vector<double>>> splitBlocks();
-	vector<uc> mergeBlocks(vector<vector<vector<double>>> blocks);
+	void compressor(string outfile, int quality);
 
-	void useDCT(bool is_F);
 };

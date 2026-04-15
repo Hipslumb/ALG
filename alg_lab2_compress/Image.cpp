@@ -1,5 +1,6 @@
 #include "Image.h"
 
+///////////////LOAD//////////////////////////////////////
 bool Image::load(string filename) {
 	const char* name = filename.c_str();
 	data = stbi_load(name, &width, &height, &pixel, 0);
@@ -42,10 +43,46 @@ bool Image::load(string filename) {
 	return true;
 }
 
+bool Image::loadDATA(const string& filename, vector<uc>& Y_compressed,
+	vector<uc>& Cb_compressed, vector<uc>& Cr_compressed, int& quality) {
+	ifstream file(filename, ios::binary);
+	if (!file.is_open()) return false;
+
+	file.read((char*)&width, 4);
+	file.read((char*)&height, 4);
+	file.read((char*)&pixel, 1);
+	file.read((char*)&type, 1);
+	file.read((char*)&color_space, 1);
+	file.read((char*)&quality, 1);
+
+	uint32_t y_size, cb_size, cr_size;
+	file.read((char*)&y_size, 4);
+	file.read((char*)&cb_size, 4);
+	file.read((char*)&cr_size, 4);
+
+	Y_compressed.resize(y_size);
+	Cb_compressed.resize(cb_size);
+	Cr_compressed.resize(cr_size);
+
+	file.read((char*)Y_compressed.data(), y_size);
+	file.read((char*)Cb_compressed.data(), cb_size);
+	file.read((char*)Cr_compressed.data(), cr_size);
+
+	file.close();
+
+	data_size = width * height * pixel;
+	data = new uc[data_size];
+	memset(data, 0, data_size);
+
+	return true;
+}
+
+////////////SAVE////////////////////////////////////////////////////
 void Image::save(string filename) {
 	const char* name = filename.c_str();
 
 	ofstream file(name, ios::binary);
+	//first 5
 	file.write((char*)&width, 4);
 	file.write((char*)&height, 4);
 	file.write((char*)&pixel, 1);
@@ -56,6 +93,36 @@ void Image::save(string filename) {
 	file.close();
 }
 
+void Image::saveDATA(string filename, const vector<uc>& Y_compressed,
+	const vector<uc>& Cb_compressed, const vector<uc>& Cr_compressed, int quality) {
+	const char* name = filename.c_str();
+
+	ofstream file(name, ios::binary);
+	//first 5 + quality
+	file.write((char*)&width, 4);
+	file.write((char*)&height, 4);
+	file.write((char*)&pixel, 1);
+	file.write((char*)&type, 1);
+	file.write((char*)&color_space, 1);
+
+	int y_size = Y_compressed.size();
+	int cb_size = Cb_compressed.size();
+	int cr_size = Cr_compressed.size();
+
+	file.write((char*)&y_size, 4);
+	file.write((char*)&cb_size, 4);
+	file.write((char*)&cr_size, 4);
+
+	// Данные
+	file.write((char*)Y_compressed.data(), y_size);
+	file.write((char*)Cb_compressed.data(), cb_size);
+	file.write((char*)Cr_compressed.data(), cr_size);
+
+	file.close();
+}
+
+
+///PEREVOD/////////////////////////////////////////////////////////
 void Image::toGrayscale() {
 	if (!data || pixel != 3) return;
 

@@ -42,6 +42,47 @@ vector<int> zigzag(const vector<vector<int>>& matrix) {
 
     return result;
 }
+
+vector<vector<int>> inverseZigzag(const vector<int>& zigzagged, int N, int M) {
+    vector<vector<int>> matrix(N, vector<int>(M, 0));
+
+    int row = 0, col = 0;
+    bool goingUp = true;
+
+    for (int i = 0; i < N * M; i++) {
+        matrix[row][col] = zigzagged[i];
+        if (goingUp) {
+            if (col == M - 1) {
+                row++;
+                goingUp = false;
+            }
+            else if (row == 0) {
+                col++;
+                goingUp = false;
+            }
+            else {
+                row--;
+                col++;
+            }
+        }
+        else {
+            if (row == N - 1) {
+                col++;
+                goingUp = true;
+            }
+            else if (col == 0) {
+                row++;
+                goingUp = true;
+            }
+            else {
+                row++;
+                col--;
+            }
+        }
+    }
+
+    return matrix;
+}
 //////////////diff/////////////////////////////
 vector<int> encodeDC(const vector<int>& dc) {
     if (dc.empty()) return {};
@@ -125,7 +166,7 @@ vector<AC> rle_encoding(const vector<int>& ac, int N, int M) {
     return result;
 }
 
-vector<int> rle_decoding(const vector<AC>& rleCodes) {
+vector<int> rle_decoding(const vector<AC>& rleCodes, int N, int M) {
     vector<int> result;
     int acCount = N * M - 1;
 
@@ -182,50 +223,6 @@ vector<int> vlc_decoding(const vector<DC>& vlcData) {
 }
 
 /////////HUFFMAN///////////////////////////////////////////
-vector<uc> Huf_encoding(const vector<int>& keys, map<int, string>& huf_table) {
-    vector<uc> encoded;
-    string bits;
-
-    for (int key : keys) {
-        bits += huf_table[key];
-    }
-
-    encoded = packBits(bits);
-    return encoded;
-}
-
-vector<int> Huf_decoding(const vector<uc>& encoded, map<string, int>& huf_table) {
-    vector<int> decoded;
-
-    if (encoded.empty()) return decoded;
-
-    int last_size = encoded[0];
-
-    string bits;
-    for (int i = 1; i < (int)encoded.size(); i++) {
-        uc b = encoded[i];
-        for (int j = 7; j >= 0; j--) {
-            bits += ((b >> j) & 1) ? '1' : '0';
-        }
-    }
-
-    if (last_size < 8) {
-        bits = bits.substr(0, bits.size() - (8 - last_size));
-    }
-
-    string cur;
-    for (char bit : bits) {
-        cur += bit;
-        auto it = huf_table.find(cur);
-        if (it != huf_table.end()) {
-            decoded.push_back(it->second);
-            cur = "";
-        }
-    }
-
-    return decoded;
-}
-//////////////for huffman//////////////////////
 
 vector<uc> packBits(const string& bits) {
     vector<uc> encoded;
@@ -252,10 +249,10 @@ vector<uc> packBits(const string& bits) {
     return encoded;
 }
 
-vector<uc> encodeDC_full(const vector<DC>& dcVLC, map<int, string>& hufTable) {
+vector<uc> Huf_encodingDC(const vector<DC>& dc, map<int, string>& hufTable) {
     string bits;
 
-    for (const auto& vlc : dcVLC) {
+    for (const auto& vlc : dc) {
         int size = vlc.size;
         int code = vlc.code;
 
@@ -268,10 +265,10 @@ vector<uc> encodeDC_full(const vector<DC>& dcVLC, map<int, string>& hufTable) {
     return packBits(bits);
 }
 
-vector<uc> encodeAC_full(const vector<AC>& acVLC, map<int, string>& hufTable) {
+vector<uc> Huf_encodingAC(const vector<AC>& ac, map<int, string>& hufTable) {
     string bits;
 
-    for (const auto& vlc : acVLC) {
+    for (const auto& vlc : ac) {
         //(0,0,0)
         if (vlc.run == 0 && vlc.size == 0 && vlc.code == 0) {
             bits += hufTable[0x00];
@@ -291,4 +288,92 @@ vector<uc> encodeAC_full(const vector<AC>& acVLC, map<int, string>& hufTable) {
     }
 
     return packBits(bits);
+}
+
+string unpack_bits(const vector<uc>& encoded) {
+    if (encoded.empty()) return "";
+
+    int last_size = encoded[0];
+    string bits;
+
+    for (int i = 1; i < (int)encoded.size(); i++) {
+        uc b = encoded[i];
+        for (int j = 7; j >= 0; j--) {
+            bits += ((b >> j) & 1) ? '1' : '0';
+        }
+    }
+
+    if (last_size < 8) {
+        bits = bits.substr(0, bits.size() - (8 - last_size));
+    }
+
+    return bits;
+}
+
+vector<DC> Huf_decodingDC(const vector<uc>& encoded, map<string, int>& reverseTable) {
+    vector<DC> result;
+    string bits = unpack_bits(encoded);
+    if (bits.empty()) return result;
+
+    string cur;
+    int pos = 0;
+    while (pos < (int)bits.size()) {
+        cur += bits[pos++];
+        auto it = reverseTable.find(cur);
+        if (it != reverseTable.end()) {
+            int size = it->second;
+
+            if (pos + size > (int)bits.size()) break;
+            int code = 0;
+            for (int i = 0; i < size; i++) {
+                code = (code << 1) | (bits[pos++] - '0');
+            }
+
+            result.push_back({ size, code });
+            cur = "";
+        }
+    }
+
+    return result;
+}
+
+vector<AC> Huf_decodingAC(const vector<uc>& encoded, map<string, int>& reverseTable) {
+    vector<AC> result;
+    string bits = unpack_bits(encoded);
+    if (bits.empty()) return result;
+
+    string cur;
+    int pos = 0;
+    while (pos < (int)bits.size()) {
+        cur += bits[pos++];
+        auto it = reverseTable.find(cur);
+        if (it != reverseTable.end()) {
+            int key = it->second;
+            int run = (key >> 4) & 0x0F;
+            int size = key & 0x0F;
+
+            if (run == 0 && size == 0) {
+                result.push_back({ 0, 0, 0 });
+                cur = "";
+                continue;
+            }
+
+            if (run == 15 && size == 0) {
+                result.push_back({ 15, 0, 0 });
+                cur = "";
+                continue;
+            }
+
+            if (pos + size > (int)bits.size()) break;
+            int code = 0;
+            for (int i = 0; i < size; i++) {
+                code = (code << 1) | (bits[pos++] - '0');
+            }
+
+            result.push_back({ run, size, code });
+            cur = "";
+        }
+    }
+
+    return result;
 }
