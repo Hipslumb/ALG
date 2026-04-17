@@ -12,8 +12,6 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
-//const int N = 8, M = 8;
-
 using namespace std;
 #define uc unsigned char
 

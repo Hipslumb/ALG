@@ -32,6 +32,7 @@ public:
 		const vector<uc>& Cb_compressed, const vector<uc>& Cr_compressed,
 		int quality, int dc_y, int dc_cb, int dc_cr, int k);
 	void saveJPEG(string outfile);
+	void savePNG(string outfile);
 	
 	void toGrayscale();
 	void toBW_byrounding();
@@ -41,4 +42,6 @@ public:
 
 	void compressor(string outfile, int quality);
 	void decompressor(string infile);
+	void compressY(string outfile, int quality);
+	void decompressY(string infile);
 };

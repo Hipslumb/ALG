@@ -85,9 +85,13 @@ vector<uc> compress(const vector<uc>& channel, int w, int h, const int q_table[6
 }
 
 void Image::compressor(string outfile, int quality) {
+    orig_h = height; orig_w = width;
+    if (pixel == 1) {
+        compressY(outfile, quality);
+        return;
+    }
     //1
 	to_YCbCr();
-    orig_h = height; orig_w = width;
     int w = width, h = height; int dc_y, dc_cb, dc_cr;
 
     vector<uc> Y(w * h);
@@ -147,9 +151,7 @@ vector<uc> decompess(const vector<uc>& channel, int dc_len, int ac_len, int& w, 
 
     for (int bi = 0; bi < H; bi++) {
         for (int bj = 0; bj < W; bj++) {
-            if (block_i == 4096) {
-                cout << "hi";
-            }
+
             vector<int> ac = rle_decoding(ac_rle,pos, 8, 8);
 
             vector<int> zigzagged(64);
@@ -172,7 +174,10 @@ vector<uc> decompess(const vector<uc>& channel, int dc_len, int ac_len, int& w, 
 }
 
 void Image::decompressor(string infile) {
-
+    if (pixel == 1) {
+        decompressY(infile);
+        return;
+    }
     vector<uc> Y_compressed, Cb_compressed, Cr_compressed; int quality = 0, dc_y, dc_cb, dc_cr, k = 0;
     loadDATA(infile, Y_compressed, Cb_compressed, Cr_compressed, quality, dc_y, dc_cb, dc_cr, k);
 
@@ -199,4 +204,39 @@ void Image::decompressor(string infile) {
         data[i * 3 + 2] = Cr[i];
     }
     to_RGB();
+}
+
+void Image::compressY(string outfile, int quality) {
+    int w = width, h = height;
+    vector<uc> Y(data, data + w * h);
+    dopFILL(Y, w, h);
+
+    int Y_table[64];
+    new_table(Y_QT, quality, Y_table);
+
+    int dc_y;
+    vector<uc> Y_compressed = compress(Y, w, h, Y_table, dc_y, 1);
+
+    saveDATA(outfile, Y_compressed, {}, {}, quality, dc_y, 0, 0, 1);
+}
+
+void Image::decompressY(string infile) {
+    vector<uc> Y_compressed, dum1, dum2;
+    int quality = 0, dc_y, dc_cb, dc_cr, k = 0;
+
+    loadDATA(infile, Y_compressed, dum1, dum2, quality, dc_y, dc_cb, dc_cr, k);
+
+    int Y_table[64];
+    new_table(Y_QT, quality, Y_table);
+
+    int w = width, h = height;
+    vector<uc> Y = decompess(Y_compressed, dc_y, Y_compressed.size() - dc_y,
+        w, h, orig_w, orig_h, Y_table, 1);
+
+    data_size = orig_w * orig_h;
+    data = new uc[data_size];
+    memcpy(data, Y.data(), data_size);
+
+    width = w;
+    height = h;
 }

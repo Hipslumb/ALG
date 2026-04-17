@@ -27,30 +27,30 @@ void dependence(string in, string out) {
 	file.close();
 }
 
-static string my_rgb = "testdata/MYRGB.jpg";
-static string my_g = "testdata/MYgrey.jpg";
-static string my_bwR = "testdata/MYbw_round.jpg";
-static string my_bwD = "testdata/MYbw_dither.jpg";
+static string my_rgb = "testdata/MYRGB.png";
+static string my_g = "testdata/MYgrey.png";
+static string my_bwR = "testdata/MYbw_round.png";
+static string my_bwD = "testdata/MYbw_dither.png";
 
-static string lena_rgb = "testdata/LENARGB.jpg";
-static string lena_g = "testdata/LENAgrey.jpg";
-static string lena_bwR = "testdata/LENAbw_round.jpg";
-static string lena_bwD = "testdata/LENAbw_dither.jpg";
+static string lena_rgb = "testdata/LENARGB.png";
+static string lena_g = "testdata/LENAgrey.png";
+static string lena_bwR = "testdata/LENAbw_round.png";
+static string lena_bwD = "testdata/LENAbw_dither.png";
 
-static string my1024_rgb = "testdata/1024RGB.jpg";
-static string my1024_g = "testdata/1024grey.jpg";
-static string my1024_bwR = "testdata/1024bw_round.jpg";
-static string my1024_bwD = "testdata/1024bw_dither.jpg";
+static string my1024_rgb = "testdata/1024RGB.png";
+static string my1024_g = "testdata/1024grey.png";
+static string my1024_bwR = "testdata/1024bw_round.png";
+static string my1024_bwD = "testdata/1024bw_dither.png";
 
 
 int main() {
 	cout << "\n\n";
-	string compr_file = "compressed/lena.bin";
-	int quality = 50;
+	string compr_file = "compressed/lena_g.bin";
+	int quality = 75;
 	clock_t start = clock();
-	//createImages("testdata/MY1024.png", "testdata/1024");
+	//createImages("testdata/RGB.png", "testdata/MY");
 
-	Image img; img.load(lena_rgb);
+	Image img; img.load(lena_g);
 	double orig_size = img.data_size;
 	cout << "Original size: " << orig_size << " byte";
 
@@ -68,12 +68,12 @@ int main() {
 
 	cout << "\nK = " << orig_size / comp_size;
 
-	//img.saveJPEG("decompressed/lena.jpg");
-	/*string in = my1024_bwD;
-	string out = "MY1024_bwD";
-	dependence(in, "dependence/" + out);*/
+	img.savePNG("decompressed/lena_g.png");
+	/*string in = lena_g;
+	string out = "LENA_G";
+	dependence(in, "dependence/" + out);
 
-	//clock_t end = clock();
+	clock_t end = clock();*/
 	double time_taken = double(end - start) / CLOCKS_PER_SEC;
 	cout << "\nTIME: " << time_taken << " seconds.";
 	cout << "\n\n";
