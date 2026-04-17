@@ -57,30 +57,3 @@ void Image::to_RGB() {
     data = rgbData;
     type = 2;
 }
-
-void Image::saveComponents(string prefix) {
-    if (!data || pixel != 3) return;
-
-    int size = width * height;
-
-    uc* Y = new uc[size];
-    for (int i = 0; i < size; i++) {
-        Y[i] = data[i * 3];
-    }
-    stbi_write_png((prefix + "_Y.png").c_str(), width, height, 1, Y, 0);
-    delete[] Y;
-
-    uc* Cb = new uc[size];
-    for (int i = 0; i < size; i++) {
-        Cb[i] = data[i * 3 + 1];
-    }
-    stbi_write_png((prefix + "_Cb.png").c_str(), width, height, 1, Cb, 0);
-    delete[] Cb;
-
-    uc* Cr = new uc[size];
-    for (int i = 0; i < size; i++) {
-        Cr[i] = data[i * 3 + 2];
-    }
-    stbi_write_png((prefix + "_Cr.png").c_str(), width, height, 1, Cr, 0);
-    delete[] Cr;
-}

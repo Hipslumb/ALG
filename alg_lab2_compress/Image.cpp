@@ -44,21 +44,31 @@ bool Image::load(string filename) {
 }
 
 bool Image::loadDATA(const string& filename, vector<uc>& Y_compressed,
-	vector<uc>& Cb_compressed, vector<uc>& Cr_compressed, int& quality) {
+	vector<uc>& Cb_compressed, vector<uc>& Cr_compressed, int& quality,
+	int& dc_y, int& dc_cb, int& dc_cr, int& k) {
+
 	ifstream file(filename, ios::binary);
 	if (!file.is_open()) return false;
 
 	file.read((char*)&width, 4);
 	file.read((char*)&height, 4);
+	file.read((char*)&orig_w, 4);
+	file.read((char*)&orig_h, 4);
 	file.read((char*)&pixel, 1);
 	file.read((char*)&type, 1);
 	file.read((char*)&color_space, 1);
 	file.read((char*)&quality, 1);
+	file.read((char*)&k, 1);
 
-	uint32_t y_size, cb_size, cr_size;
+	int y_size, cb_size, cr_size;
 	file.read((char*)&y_size, 4);
+	file.read((char*)&dc_y, 4);
+
 	file.read((char*)&cb_size, 4);
+	file.read((char*)&dc_cb, 4);
+
 	file.read((char*)&cr_size, 4);
+	file.read((char*)&dc_cr, 4);
 
 	Y_compressed.resize(y_size);
 	Cb_compressed.resize(cb_size);
@@ -94,24 +104,35 @@ void Image::save(string filename) {
 }
 
 void Image::saveDATA(string filename, const vector<uc>& Y_compressed,
-	const vector<uc>& Cb_compressed, const vector<uc>& Cr_compressed, int quality) {
+	const vector<uc>& Cb_compressed, const vector<uc>& Cr_compressed,
+	int quality, int dc_y, int dc_cb, int dc_cr, int k) {
+
 	const char* name = filename.c_str();
 
 	ofstream file(name, ios::binary);
 	//first 5 + quality
 	file.write((char*)&width, 4);
 	file.write((char*)&height, 4);
+	file.write((char*)&orig_w, 4);
+	file.write((char*)&orig_h, 4);
 	file.write((char*)&pixel, 1);
 	file.write((char*)&type, 1);
 	file.write((char*)&color_space, 1);
+	file.write((char*)&quality, 1);
+	file.write((char*)&k, 1);
 
 	int y_size = Y_compressed.size();
 	int cb_size = Cb_compressed.size();
 	int cr_size = Cr_compressed.size();
 
 	file.write((char*)&y_size, 4);
+	file.write((char*)&dc_y, 4);
+
 	file.write((char*)&cb_size, 4);
+	file.write((char*)&dc_cb, 4);
+
 	file.write((char*)&cr_size, 4);
+	file.write((char*)&dc_cr, 4);
 
 	// Данные
 	file.write((char*)Y_compressed.data(), y_size);

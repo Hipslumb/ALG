@@ -166,20 +166,21 @@ vector<AC> rle_encoding(const vector<int>& ac, int N, int M) {
     return result;
 }
 
-vector<int> rle_decoding(const vector<AC>& rleCodes, int N, int M) {
+vector<int> rle_decoding(const vector<AC>& rle_codes,int& pos, int N, int M) {
     vector<int> result;
     int acCount = N * M - 1;
+    while (pos < (int)rle_codes.size()) {
+        AC code = rle_codes[pos++];
 
-    for (const auto& code : rleCodes) {
         if (code.run == 0 && code.size == 0 && code.code == 0) {
             while ((int)result.size() < acCount)
                 result.push_back(0);
-            
+
             break;
         }
 
         if (code.run == 15 && code.size == 0 && code.code == 0) {
-            for (int i = 0; i < 16; i++) 
+            for (int i = 0; i < 16; i++)
                 result.push_back(0);
             continue;
         }
@@ -189,6 +190,7 @@ vector<int> rle_decoding(const vector<AC>& rleCodes, int N, int M) {
 
         int val = decoded_code(code.code, code.size);
         result.push_back(val);
+
     }
 
     while ((int)result.size() > acCount)
@@ -341,13 +343,14 @@ vector<AC> Huf_decodingAC(const vector<uc>& encoded, map<string, int>& reverseTa
     vector<AC> result;
     string bits = unpack_bits(encoded);
     if (bits.empty()) return result;
-
+    int codeCount = 0;
     string cur;
     int pos = 0;
     while (pos < (int)bits.size()) {
         cur += bits[pos++];
         auto it = reverseTable.find(cur);
         if (it != reverseTable.end()) {
+            codeCount++;
             int key = it->second;
             int run = (key >> 4) & 0x0F;
             int size = key & 0x0F;
@@ -373,6 +376,7 @@ vector<AC> Huf_decodingAC(const vector<uc>& encoded, map<string, int>& reverseTa
             result.push_back({ run, size, code });
             cur = "";
         }
+
     }
 
     return result;

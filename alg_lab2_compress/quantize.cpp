@@ -36,6 +36,7 @@ map<string, int> reverse(const map<int, string>& table) {
     for (auto& p : table) {
         reversed[p.second] = p.first;
     }
+    return reversed;
 }
 
 void new_table(const int baseQ[64], int quality, int outQ[64]) {

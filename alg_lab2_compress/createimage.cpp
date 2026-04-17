@@ -5,6 +5,9 @@ void createImages(string filename, string outpath) {
 	Image img;
 	img.load(filename);
     img.save(outpath + "RGB.raw");
+    string outfile = outpath + "RGB.jpg";
+
+    img.saveJPEG(outfile);
     cout << "ORIGINAL IMAGE: " << img.width << "x" << img.height;
     if (img.type == 0) cout << ", BLACK AND WHITE";
     else if(img.type == 1) cout << ", GREY-SCALE";
@@ -15,29 +18,29 @@ void createImages(string filename, string outpath) {
     grayImg.toGrayscale();
     grayImg.save(outpath + "grey.raw");
     
-    string outfile = outpath + "grey.png";
-    grayImg.savePNG(outfile);
-    cout << "+ grey.png\n";
+    outfile = outpath + "grey.jpg";
+    grayImg.saveJPEG(outfile);
+    cout << "+ grey.jpg\n";
 
     Image bwRoundImg; bwRoundImg.load(filename);
     bwRoundImg.toBW_byrounding();
     bwRoundImg.save(outpath + "bw_round.raw");
 
-    outfile = outpath + "bw_round.png";
-    bwRoundImg.savePNG(outfile);
-    cout << "+ bw_round.png\n";
+    outfile = outpath + "bw_round.jpg";
+    bwRoundImg.saveJPEG(outfile);
+    cout << "+ bw_round.jpg\n";
 
     Image bwDitherImg; bwDitherImg.load(filename);
     bwDitherImg.toBW_byDithering();
     bwDitherImg.save(outpath + "bw_dither.raw");
 
-    outfile = outpath + "bw_dither.png";
-    bwDitherImg.savePNG(outfile);
-    cout << "+ bw_dither.png\n";
+    outfile = outpath + "bw_dither.jpg";
+    bwDitherImg.saveJPEG(outfile);
+    cout << "+ bw_dither.jpg\n";
 
 }
 
-void Image::savePNG(string outfile) {
+void Image::saveJPEG(string outfile) {
     const char* name = outfile.c_str();
-    stbi_write_png(name, width, height, pixel, data, 0);
+    stbi_write_jpg(name, width, height, pixel, data, 0);
 }

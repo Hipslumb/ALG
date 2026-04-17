@@ -37,24 +37,11 @@ vector<uc> upsampling(const vector<uc>& channel, int w, int h, int k) {
 	return result;
 }
 
-void testPixelationArtifacts(string filename) {
-
-	int koef[] = { 2, 4, 8, 16 };
-	int i = 0;
-	for (int k : koef) {
-		Image copy;
-		copy.load(filename);
-		copy.downsampling(k);
-		
-		copy.upsampling(k);
-		copy.savePNG("koef/upsampled_" + to_string(k) + ".png");
-
-	}
-}
+/////////////////////////////////////INTERPOLATION////////////////////////////////////
 
 float linearInterpolation(float x1, float y1, float x2, float y2, float x) {
 	if (x < x1 || x > x2) {
-		cout << "Warning: x = " << x << " out of range [" << x1 << ", " << x2 << "]" << endl;
+		cout << "Warning: x = " << x << " out of range [" << x1 << ", " << x2 << "]\n";
 	}
 	if (x1 == x2)
 		return y1;
